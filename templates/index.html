@@ -1,0 +1,1121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pokemon Sleeve Collection Manager</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            color: #667eea;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 1.1em;
+        }
+
+        .feature-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            margin-top: 10px;
+            font-weight: 600;
+        }
+
+        .controls {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-bottom: 30px;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .tab {
+            padding: 12px 24px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            color: #666;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .tab.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+            font-weight: bold;
+        }
+
+        .tab:hover {
+            color: #667eea;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .upload-area {
+            border: 3px dashed #667eea;
+            border-radius: 10px;
+            padding: 40px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: #f8f9ff;
+        }
+
+        .upload-area:hover {
+            border-color: #764ba2;
+            background: #f0f2ff;
+        }
+
+        .upload-area.dragover {
+            background: #e8ebff;
+            border-color: #764ba2;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        input[type="text"],
+        input[type="file"],
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #f8f9ff;
+            border-radius: 8px;
+            border: 2px solid #e8ebff;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+
+        .checkbox-group label {
+            margin: 0;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .info-text {
+            color: #666;
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            font-weight: 600;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .search-bar {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .search-bar input {
+            flex: 1;
+        }
+
+        .tag-filter {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .tag-chip {
+            padding: 8px 16px;
+            background: #e8ebff;
+            border: 2px solid #667eea;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 14px;
+            color: #667eea;
+        }
+
+        .tag-chip:hover,
+        .tag-chip.active {
+            background: #667eea;
+            color: white;
+        }
+
+        .preview-container {
+            margin: 20px 0;
+            padding: 20px;
+            background: #f8f9ff;
+            border-radius: 10px;
+            border: 2px solid #e8ebff;
+            display: none;
+        }
+
+        .preview-container.active {
+            display: block;
+        }
+
+        .preview-image {
+            max-width: 100%;
+            max-height: 400px;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .preview-label {
+            font-weight: 600;
+            color: #667eea;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 25px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+
+        .card-image {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            background: #f0f0f0;
+        }
+
+        .card-body {
+            padding: 15px;
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .card-description {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 10px;
+            line-height: 1.4;
+        }
+
+        .card-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin-bottom: 10px;
+        }
+
+        .tag {
+            background: #e8ebff;
+            color: #667eea;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .card-badge {
+            display: inline-block;
+            background: #4caf50;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 10px;
+            font-size: 11px;
+            margin-bottom: 8px;
+        }
+
+        .card-actions {
+            display: flex;
+            gap: 10px;
+            padding-top: 10px;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .btn-small {
+            padding: 6px 12px;
+            font-size: 13px;
+            flex: 1;
+        }
+
+        .btn-delete {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        .message {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+
+        .message.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .message.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .message.warning {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+
+        .message.info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 28px;
+            cursor: pointer;
+            color: #999;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+        }
+
+        .similar-images {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .similar-card {
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            overflow: hidden;
+            transition: border-color 0.3s;
+        }
+
+        .similar-card:hover {
+            border-color: #667eea;
+        }
+
+        .similar-image {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+        }
+
+        .similar-info {
+            padding: 8px;
+            font-size: 12px;
+            text-align: center;
+            background: #f8f9ff;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+        }
+
+        .empty-state svg {
+            width: 100px;
+            height: 100px;
+            margin-bottom: 20px;
+            opacity: 0.3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🎴 Pokemon Sleeve Collection</h1>
+            <p class="subtitle">Manage, search, and organize your Pokemon card sleeves with duplicate detection</p>
+            <div style="margin-top: 15px;">
+                <span class="feature-badge">✨ Auto Crop & Straighten</span>
+                <a href="/gallery" class="feature-badge" style="text-decoration: none; margin-left: 10px; background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">🖼️ Gallery View</a>
+            </div>
+        </header>
+
+        <div class="controls">
+            <div class="tabs">
+                <button class="tab active" onclick="switchTab('browse')">Browse Collection</button>
+                <button class="tab" onclick="switchTab('add')">Add New</button>
+                <button class="tab" onclick="switchTab('check')">Check Duplicate</button>
+            </div>
+
+            <!-- Browse Tab -->
+            <div id="browse-tab" class="tab-content active">
+                <div class="search-bar">
+                    <input type="text" id="search-input" placeholder="Search by name, description, or tags...">
+                    <button onclick="searchCollection()">Search</button>
+                    <button onclick="clearSearch()">Clear</button>
+                </div>
+                
+                <div id="tag-filter-container" class="tag-filter"></div>
+                
+                <div id="collection-stats" style="margin-bottom: 15px; color: #666;"></div>
+            </div>
+
+            <!-- Add New Tab -->
+            <div id="add-tab" class="tab-content">
+                <div class="checkbox-group">
+                    <input type="checkbox" id="auto-process-upload" checked>
+                    <label for="auto-process-upload">
+                        🎯 Auto-crop and straighten sleeve from background
+                        <div class="info-text">Best for photos taken on solid color backgrounds (like the orange example)</div>
+                    </label>
+                </div>
+
+                <form id="upload-form" onsubmit="return false;">
+                    <div class="upload-area" id="drop-area">
+                        <p style="font-size: 48px; margin-bottom: 10px;">📤</p>
+                        <p style="font-size: 18px; color: #667eea; margin-bottom: 10px;">Click to upload or drag and drop</p>
+                        <p style="color: #999; font-size: 14px;">PNG, JPG, GIF, WEBP (Max 16MB)</p>
+                        <input type="file" id="file-input" accept="image/*" style="display: none;">
+                    </div>
+                    
+                    <div id="upload-preview" class="preview-container">
+                        <div class="preview-label">
+                            <span>✅ Preview (Processed)</span>
+                        </div>
+                        <img id="upload-preview-img" class="preview-image" alt="Preview">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="name-input">Sleeve Name</label>
+                        <input type="text" id="name-input" placeholder="e.g., Pikachu Ultra Pro Sleeves">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="description-input">Description</label>
+                        <textarea id="description-input" placeholder="Add any notes or details about this sleeve..."></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="tags-input">Tags (comma-separated)</label>
+                        <input type="text" id="tags-input" placeholder="e.g., pikachu, yellow, ultra pro, electric">
+                    </div>
+                    
+                    <button type="submit" onclick="uploadImage()">Add to Collection</button>
+                </form>
+            </div>
+
+            <!-- Check Duplicate Tab -->
+            <div id="check-tab" class="tab-content">
+                <div class="checkbox-group">
+                    <input type="checkbox" id="auto-process-check" checked>
+                    <label for="auto-process-check">
+                        🎯 Auto-crop and straighten for better comparison
+                        <div class="info-text">Recommended for accurate duplicate detection</div>
+                    </label>
+                </div>
+
+                <div class="upload-area" id="check-drop-area">
+                    <p style="font-size: 48px; margin-bottom: 10px;">🔍</p>
+                    <p style="font-size: 18px; color: #667eea; margin-bottom: 10px;">Upload an image to check for duplicates</p>
+                    <p style="color: #999; font-size: 14px;">This will search your collection for similar images</p>
+                    <input type="file" id="check-file-input" accept="image/*" style="display: none;">
+                </div>
+                
+                <div id="check-preview" class="preview-container">
+                    <div class="preview-label">
+                        <span>✅ Processed Image</span>
+                    </div>
+                    <img id="check-preview-img" class="preview-image" alt="Preview">
+                </div>
+
+                <div id="duplicate-results"></div>
+            </div>
+        </div>
+
+        <div id="message-container"></div>
+
+        <div id="gallery" class="gallery">
+            <div class="loading">
+                <div class="spinner"></div>
+                <p>Loading collection...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Modal -->
+    <div id="edit-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Edit Sleeve</h2>
+                <button class="close-modal" onclick="closeEditModal()">×</button>
+            </div>
+            <form id="edit-form" onsubmit="return false;">
+                <input type="hidden" id="edit-id">
+                <div class="form-group">
+                    <label for="edit-name">Name</label>
+                    <input type="text" id="edit-name">
+                </div>
+                <div class="form-group">
+                    <label for="edit-description">Description</label>
+                    <textarea id="edit-description"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="edit-tags">Tags (comma-separated)</label>
+                    <input type="text" id="edit-tags">
+                </div>
+                <button onclick="saveEdit()">Save Changes</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        let allImages = [];
+        let currentFilter = '';
+        let currentTag = '';
+        let processedImageData = null;
+
+        // Tab switching
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            
+            event.target.classList.add('active');
+            document.getElementById(tabName + '-tab').classList.add('active');
+        }
+
+        // File upload drag and drop
+        const dropArea = document.getElementById('drop-area');
+        const fileInput = document.getElementById('file-input');
+        const checkDropArea = document.getElementById('check-drop-area');
+        const checkFileInput = document.getElementById('check-file-input');
+
+        [dropArea, checkDropArea].forEach(area => {
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                area.addEventListener(eventName, preventDefaults, false);
+            });
+
+            ['dragenter', 'dragover'].forEach(eventName => {
+                area.addEventListener(eventName, () => area.classList.add('dragover'), false);
+            });
+
+            ['dragleave', 'drop'].forEach(eventName => {
+                area.addEventListener(eventName, () => area.classList.remove('dragover'), false);
+            });
+        });
+
+        dropArea.addEventListener('drop', (e) => {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            fileInput.files = files;
+            previewUploadImage();
+        }, false);
+
+        checkDropArea.addEventListener('drop', (e) => {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            checkFileInput.files = files;
+            previewCheckImage();
+        }, false);
+
+        dropArea.addEventListener('click', () => fileInput.click());
+        checkDropArea.addEventListener('click', () => checkFileInput.click());
+        fileInput.addEventListener('change', previewUploadImage);
+        checkFileInput.addEventListener('change', previewCheckImage);
+
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        // Preview upload image
+        async function previewUploadImage() {
+            const fileInput = document.getElementById('file-input');
+            const previewContainer = document.getElementById('upload-preview');
+            const previewImg = document.getElementById('upload-preview-img');
+            const autoProcess = document.getElementById('auto-process-upload').checked;
+
+            if (!fileInput.files[0]) {
+                previewContainer.classList.remove('active');
+                return;
+            }
+
+            if (autoProcess) {
+                // Process the image
+                const formData = new FormData();
+                formData.append('file', fileInput.files[0]);
+
+                try {
+                    const response = await fetch('/api/process-image', {
+                        method: 'POST',
+                        body: formData
+                    });
+
+                    const data = await response.json();
+
+                    if (data.success && data.processed) {
+                        previewImg.src = data.image_data;
+                        processedImageData = data.image_data;
+                        previewContainer.classList.add('active');
+                        showMessage('✨ Image processed! Ready to add.', 'info');
+                    } else {
+                        // Show original image
+                        const reader = new FileReader();
+                        reader.onload = (e) => {
+                            previewImg.src = e.target.result;
+                            processedImageData = null;
+                            previewContainer.classList.add('active');
+                        };
+                        reader.readAsDataURL(fileInput.files[0]);
+                        
+                        if (data.message) {
+                            showMessage(data.message, 'info');
+                        }
+                    }
+                } catch (error) {
+                    showMessage('Error processing image: ' + error.message, 'error');
+                }
+            } else {
+                // Just show original
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    previewImg.src = e.target.result;
+                    processedImageData = null;
+                    previewContainer.classList.add('active');
+                };
+                reader.readAsDataURL(fileInput.files[0]);
+            }
+        }
+
+        // Preview check image
+        async function previewCheckImage() {
+            const fileInput = document.getElementById('check-file-input');
+            const previewContainer = document.getElementById('check-preview');
+            const previewImg = document.getElementById('check-preview-img');
+            const autoProcess = document.getElementById('auto-process-check').checked;
+
+            if (!fileInput.files[0]) {
+                previewContainer.classList.remove('active');
+                return;
+            }
+
+            if (autoProcess) {
+                const formData = new FormData();
+                formData.append('file', fileInput.files[0]);
+
+                try {
+                    const response = await fetch('/api/process-image', {
+                        method: 'POST',
+                        body: formData
+                    });
+
+                    const data = await response.json();
+
+                    if (data.success && data.processed) {
+                        previewImg.src = data.image_data;
+                        previewContainer.classList.add('active');
+                    } else {
+                        const reader = new FileReader();
+                        reader.onload = (e) => {
+                            previewImg.src = e.target.result;
+                            previewContainer.classList.add('active');
+                        };
+                        reader.readAsDataURL(fileInput.files[0]);
+                    }
+                } catch (error) {
+                    console.error('Error processing image:', error);
+                }
+            } else {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    previewImg.src = e.target.result;
+                    previewContainer.classList.add('active');
+                };
+                reader.readAsDataURL(fileInput.files[0]);
+            }
+
+            // Also check for duplicates
+            checkForDuplicate();
+        }
+
+        // Load collection
+        async function loadCollection() {
+            try {
+                const response = await fetch('/api/collection');
+                const data = await response.json();
+                allImages = data.images;
+                displayGallery(allImages);
+                updateStats(data.total);
+                loadTags();
+            } catch (error) {
+                showMessage('Error loading collection: ' + error.message, 'error');
+            }
+        }
+
+        // Display gallery
+        function displayGallery(images) {
+            const gallery = document.getElementById('gallery');
+            
+            if (images.length === 0) {
+                gallery.innerHTML = `
+                    <div class="empty-state" style="grid-column: 1 / -1;">
+                        <p style="font-size: 64px;">🎴</p>
+                        <h3 style="margin-bottom: 10px;">No sleeves yet!</h3>
+                        <p>Start building your collection by adding some Pokemon card sleeves.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            gallery.innerHTML = images.map(img => `
+                <div class="card">
+                    ${img.was_auto_processed ? '<div class="card-badge">Auto-Processed</div>' : ''}
+                    <img src="/collection/${img.filename}" alt="${img.name || 'Pokemon Sleeve'}" class="card-image">
+                    <div class="card-body">
+                        <div class="card-title">${img.name || img.original_filename}</div>
+                        ${img.description ? `<div class="card-description">${img.description}</div>` : ''}
+                        ${img.tags && img.tags.length > 0 ? `
+                            <div class="card-tags">
+                                ${img.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
+                            </div>
+                        ` : ''}
+                        <div class="card-actions">
+                            <button class="btn-small" onclick="openEditModal('${img.id}')">Edit</button>
+                            <button class="btn-small btn-delete" onclick="deleteImage('${img.id}')">Delete</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Upload image
+        async function uploadImage() {
+            const fileInput = document.getElementById('file-input');
+            const name = document.getElementById('name-input').value;
+            const description = document.getElementById('description-input').value;
+            const tags = document.getElementById('tags-input').value;
+            const autoProcess = document.getElementById('auto-process-upload').checked;
+
+            if (!fileInput.files[0]) {
+                showMessage('Please select an image file', 'error');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('file', fileInput.files[0]);
+            formData.append('name', name);
+            formData.append('description', description);
+            formData.append('tags', tags);
+            formData.append('auto_process', autoProcess);
+
+            try {
+                const response = await fetch('/api/upload', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if (response.status === 409) {
+                    showMessage(`⚠️ ${data.message} Similar sleeve: "${data.similar.filename}"`, 'warning');
+                    return;
+                }
+
+                if (response.ok) {
+                    showMessage('✅ ' + data.message, 'success');
+                    document.getElementById('upload-form').reset();
+                    document.getElementById('upload-preview').classList.remove('active');
+                    loadCollection();
+                    switchTab('browse');
+                } else {
+                    showMessage('Error: ' + data.error, 'error');
+                }
+            } catch (error) {
+                showMessage('Upload failed: ' + error.message, 'error');
+            }
+        }
+
+        // Check for duplicate
+        async function checkForDuplicate() {
+            const fileInput = document.getElementById('check-file-input');
+            const resultsDiv = document.getElementById('duplicate-results');
+            const autoProcess = document.getElementById('auto-process-check').checked;
+
+            if (!fileInput.files[0]) {
+                return;
+            }
+
+            resultsDiv.innerHTML = '<div class="loading"><div class="spinner"></div><p>Checking for duplicates...</p></div>';
+
+            const formData = new FormData();
+            formData.append('file', fileInput.files[0]);
+            formData.append('auto_process', autoProcess);
+
+            try {
+                const response = await fetch('/api/check-duplicate', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if (data.is_duplicate) {
+                    resultsDiv.innerHTML = `
+                        <div class="message warning">
+                            <strong>⚠️ Duplicate Found!</strong><br>
+                            ${data.message}
+                        </div>
+                        <div class="similar-images">
+                            ${data.similar_images.map(img => `
+                                <div class="similar-card">
+                                    <img src="/collection/${img.filename}" alt="Similar" class="similar-image">
+                                    <div class="similar-info">
+                                        Match: ${Math.round((10 - img.distance) / 10 * 100)}%
+                                        ${img.tags.length > 0 ? `<br>${img.tags.slice(0, 2).join(', ')}` : ''}
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    `;
+                } else if (data.similar_images.length > 0) {
+                    resultsDiv.innerHTML = `
+                        <div class="message success">
+                            <strong>✅ No Exact Duplicate</strong><br>
+                            ${data.message}<br>
+                            Found ${data.similar_images.length} somewhat similar images:
+                        </div>
+                        <div class="similar-images">
+                            ${data.similar_images.map(img => `
+                                <div class="similar-card">
+                                    <img src="/collection/${img.filename}" alt="Similar" class="similar-image">
+                                    <div class="similar-info">
+                                        Match: ${Math.round((10 - img.distance) / 10 * 100)}%
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    `;
+                } else {
+                    resultsDiv.innerHTML = `
+                        <div class="message success">
+                            <strong>✅ No Similar Images</strong><br>
+                            This appears to be a new, unique sleeve design!
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                resultsDiv.innerHTML = `<div class="message error">Error checking duplicate: ${error.message}</div>`;
+            }
+        }
+
+        // Delete image
+        async function deleteImage(id) {
+            if (!confirm('Are you sure you want to delete this sleeve?')) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/image/${id}`, {
+                    method: 'DELETE'
+                });
+
+                if (response.ok) {
+                    showMessage('Sleeve deleted successfully', 'success');
+                    loadCollection();
+                } else {
+                    showMessage('Error deleting sleeve', 'error');
+                }
+            } catch (error) {
+                showMessage('Delete failed: ' + error.message, 'error');
+            }
+        }
+
+        // Edit modal
+        function openEditModal(id) {
+            const image = allImages.find(img => img.id === id);
+            if (!image) return;
+
+            document.getElementById('edit-id').value = id;
+            document.getElementById('edit-name').value = image.name || '';
+            document.getElementById('edit-description').value = image.description || '';
+            document.getElementById('edit-tags').value = (image.tags || []).join(', ');
+            
+            document.getElementById('edit-modal').classList.add('active');
+        }
+
+        function closeEditModal() {
+            document.getElementById('edit-modal').classList.remove('active');
+        }
+
+        async function saveEdit() {
+            const id = document.getElementById('edit-id').value;
+            const name = document.getElementById('edit-name').value;
+            const description = document.getElementById('edit-description').value;
+            const tags = document.getElementById('edit-tags').value.split(',').map(t => t.trim()).filter(t => t);
+
+            try {
+                const response = await fetch(`/api/image/${id}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ name, description, tags })
+                });
+
+                if (response.ok) {
+                    showMessage('Sleeve updated successfully', 'success');
+                    closeEditModal();
+                    loadCollection();
+                } else {
+                    showMessage('Error updating sleeve', 'error');
+                }
+            } catch (error) {
+                showMessage('Update failed: ' + error.message, 'error');
+            }
+        }
+
+        // Search and filter
+        function searchCollection() {
+            currentFilter = document.getElementById('search-input').value;
+            applyFilters();
+        }
+
+        function clearSearch() {
+            currentFilter = '';
+            currentTag = '';
+            document.getElementById('search-input').value = '';
+            document.querySelectorAll('.tag-chip').forEach(chip => chip.classList.remove('active'));
+            displayGallery(allImages);
+            updateStats(allImages.length);
+        }
+
+        function filterByTag(tag) {
+            currentTag = currentTag === tag ? '' : tag;
+            applyFilters();
+            
+            document.querySelectorAll('.tag-chip').forEach(chip => {
+                chip.classList.toggle('active', chip.textContent === tag && currentTag);
+            });
+        }
+
+        async function applyFilters() {
+            try {
+                let url = '/api/collection?';
+                if (currentFilter) url += `search=${encodeURIComponent(currentFilter)}&`;
+                if (currentTag) url += `tag=${encodeURIComponent(currentTag)}`;
+                
+                const response = await fetch(url);
+                const data = await response.json();
+                displayGallery(data.images);
+                updateStats(data.total);
+            } catch (error) {
+                showMessage('Error filtering collection: ' + error.message, 'error');
+            }
+        }
+
+        async function loadTags() {
+            try {
+                const response = await fetch('/api/tags');
+                const data = await response.json();
+                const container = document.getElementById('tag-filter-container');
+                
+                if (data.tags.length > 0) {
+                    container.innerHTML = '<strong>Filter by tag:</strong> ' + 
+                        data.tags.map(tag => 
+                            `<span class="tag-chip" onclick="filterByTag('${tag}')">${tag}</span>`
+                        ).join('');
+                } else {
+                    container.innerHTML = '';
+                }
+            } catch (error) {
+                console.error('Error loading tags:', error);
+            }
+        }
+
+        function updateStats(count) {
+            document.getElementById('collection-stats').textContent = 
+                `Showing ${count} sleeve${count !== 1 ? 's' : ''}`;
+        }
+
+        // Show message
+        function showMessage(message, type) {
+            const container = document.getElementById('message-container');
+            const messageEl = document.createElement('div');
+            messageEl.className = `message ${type}`;
+            messageEl.textContent = message;
+            container.appendChild(messageEl);
+            
+            setTimeout(() => {
+                messageEl.remove();
+            }, 5000);
+        }
+
+        // Load collection on page load
+        loadCollection();
+    </script>
+</body>
+</html>

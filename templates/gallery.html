@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pokemon Sleeve Gallery</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #1a1a1a;
+            padding: 20px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+            padding: 20px;
+        }
+
+        .back-link {
+            display: inline-block;
+            color: #667eea;
+            text-decoration: none;
+            font-size: 14px;
+            padding: 10px 20px;
+            background: white;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+
+        .back-link:hover {
+            background: #667eea;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 0;
+            max-width: 100%;
+        }
+
+        .gallery-item {
+            width: 100%;
+            aspect-ratio: 1;
+            overflow: hidden;
+            position: relative;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .gallery-item:hover {
+            transform: scale(1.05);
+            z-index: 10;
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 60px;
+            color: white;
+        }
+
+        .spinner {
+            border: 4px solid rgba(255, 255, 255, 0.1);
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 100px 20px;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .empty-state p {
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+
+        /* Modal for full-size view */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            max-width: 90vw;
+            max-height: 90vh;
+            position: relative;
+        }
+
+        .modal-image {
+            max-width: 100%;
+            max-height: 90vh;
+            object-fit: contain;
+            border-radius: 8px;
+        }
+
+        .close-modal {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: white;
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            font-size: 28px;
+            cursor: pointer;
+            color: #333;
+            transition: all 0.3s;
+            z-index: 1001;
+        }
+
+        .close-modal:hover {
+            background: #667eea;
+            color: white;
+            transform: rotate(90deg);
+        }
+
+        @media (max-width: 768px) {
+            .gallery {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <a href="/" class="back-link">← Back to Main Collection</a>
+    </div>
+
+    <div id="gallery" class="gallery">
+        <div class="loading">
+            <div class="spinner"></div>
+            <p>Loading gallery...</p>
+        </div>
+    </div>
+
+    <!-- Full-size image modal -->
+    <div id="modal" class="modal" onclick="closeModal()">
+        <button class="close-modal" onclick="closeModal()">×</button>
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <img id="modal-image" class="modal-image" alt="Full size">
+        </div>
+    </div>
+
+    <script>
+        let allImages = [];
+
+        // Load collection
+        async function loadGallery() {
+            try {
+                const response = await fetch('/api/collection');
+                const data = await response.json();
+                allImages = data.images;
+                displayGallery(allImages);
+            } catch (error) {
+                console.error('Error loading gallery:', error);
+                document.getElementById('gallery').innerHTML = `
+                    <div class="empty-state">
+                        <p>❌</p>
+                        <h3>Error loading collection</h3>
+                    </div>
+                `;
+            }
+        }
+
+        // Display gallery
+        function displayGallery(images) {
+            const gallery = document.getElementById('gallery');
+            
+            if (images.length === 0) {
+                gallery.innerHTML = `
+                    <div class="empty-state">
+                        <p>🎴</p>
+                        <h3>No sleeves in collection yet</h3>
+                    </div>
+                `;
+                return;
+            }
+
+            gallery.innerHTML = images.map(img => `
+                <div class="gallery-item" onclick="openModal('/collection/${img.filename}')">
+                    <img src="/collection/${img.filename}" alt="Sleeve" loading="lazy">
+                </div>
+            `).join('');
+        }
+
+        // Modal functions
+        function openModal(imageSrc) {
+            document.getElementById('modal-image').src = imageSrc;
+            document.getElementById('modal').classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('modal').classList.remove('active');
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeModal();
+            }
+        });
+
+        // Load gallery on page load
+        loadGallery();
+    </script>
+</body>
+</html>

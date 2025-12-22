@@ -10,19 +10,37 @@ A web-based application for managing your Pokemon card sleeve collection with **
 - **Perspective Correction**: Straightens angled or skewed photos
 - **Better Comparisons**: Processed images lead to more accurate duplicate detection
 
+### How It Works
+Take a photo of your sleeve on a solid color background (like orange, blue, white, etc.) and the app will:
+1. Detect the edges of the sleeve using computer vision
+2. Find the four corners of the rectangular sleeve
+3. Apply perspective transform to straighten it
+4. Crop out the background
+5. Save the perfectly aligned sleeve image
+
+This means you can quickly snap photos with your phone on any colored surface and get professional-looking catalog images!
+
+## Features
+
 ### 🖼️ Image Management
 - **Add sleeves** with names, descriptions, and tags
 - **Upload images** via click or drag-and-drop
 - **Auto-process toggle** - enable/disable automatic cropping
 - **Preview processed images** before adding to collection
-- **Gallery View** - Clean image-only display of your entire collection
 - **Browse collection** with beautiful card-based gallery
 - **Edit metadata** for any sleeve in your collection
 - **Delete sleeves** when needed
 
+### 🎯 Auto-Processing Features
+- **Edge Detection**: Uses Canny edge detection to find sleeve boundaries
+- **Contour Analysis**: Identifies the largest rectangular object (your sleeve)
+- **4-Point Perspective Transform**: Straightens skewed or angled photos
+- **Background Removal**: Eliminates distracting backgrounds
+- **Preprocessing Options**: Toggle on/off for each upload or duplicate check
+
 ### 🔍 Smart Duplicate Detection
 - **Perceptual hashing** using both difference hash (dhash) and average hash (ahash)
-- **Find similar images** even if different file formats, sizes, or have minor edits
+- **Find similar images** even if they're different file formats, sizes, or have minor edits
 - **Auto-process before comparing** for more accurate duplicate detection
 - **Check duplicates** before adding to avoid redundant entries
 - **Similarity scoring** shows how closely images match (with percentages!)
@@ -33,9 +51,11 @@ A web-based application for managing your Pokemon card sleeve collection with **
 - **Filter by tags** with one-click tag chips
 - **Real-time filtering** as you type
 
-### 📊 Collection Views
-- **Main Collection**: Detailed cards with names, tags, descriptions, and actions
-- **Gallery View**: Clean, image-only grid perfect for browsing visually
+### 📊 Collection Stats
+- Track total number of sleeves
+- View all unique tags across your collection
+- See filtered results count
+- Badge showing auto-processed images
 
 ## Installation
 
@@ -54,21 +74,14 @@ A web-based application for managing your Pokemon card sleeve collection with **
    ```bash
    python app.py
    ```
-   
-   Or use the startup script:
-   ```bash
-   ./start.sh
-   ```
 
 3. **Open your browser:**
-   - Main collection: `http://localhost:5000`
-   - Gallery view: `http://localhost:5000/gallery`
+  - Main collection: `http://localhost:5000`
+  - Gallery view: `http://localhost:5000/gallery`
 
 ## How It Works
 
 ### Auto-Cropping Process
-
-Take a photo of your sleeve on a solid-color background (like orange, blue, white, etc.) and the app will:
 
 1. **Image Input**: Upload a photo of a sleeve on a solid-color background
 2. **Color Space Conversion**: Converts to grayscale for edge detection
@@ -97,10 +110,15 @@ Take a photo of your sleeve on a solid-color background (like orange, blue, whit
 - ❌ Complex/patterned background
 - ❌ Multiple sleeves in one photo
 
-### Duplicate Detection
+### Perceptual Hashing
+The app uses two perceptual hashing algorithms:
 
+1. **Difference Hash (dHash)**: Compares adjacent pixels - resistant to scaling and minor edits
+2. **Average Hash (aHash)**: Compares pixels to average brightness for additional similarity detection
+
+### Duplicate Detection Process
 1. Auto-processes image if enabled (cropping/straightening)
-2. Computes both dhash and ahash on the processed image
+2. Computes both hash types on the processed image
 3. Compares hashes against all existing images in collection
 4. Uses **Hamming distance** to measure similarity
 5. Images with distance ≤ 3 are considered very similar duplicates
@@ -140,29 +158,12 @@ Take a photo of your sleeve on a solid-color background (like orange, blue, whit
 - Fill most of the frame with the sleeve
 
 **Example Backgrounds:**
-- Orange cutting mat ✓
+- Orange cutting mat ✓ (like your example image!)
 - Blue poster board ✓
 - White table or paper ✓
 - Green or pink solid surface ✓
 - Wooden table ⚠️ (works but less ideal)
 - Patterned surface ✗ (may not work well)
-
-### Viewing Your Collection
-
-**Main Collection View (Default):**
-- Detailed cards with all metadata
-- Edit and delete options
-- Search and filter controls
-- Tag management
-
-**Gallery View:**
-- Access via: `http://localhost:5000/gallery`
-- Or click "🖼️ Gallery View" button in header
-- Clean, image-only grid display
-- No text or controls - just sleeves
-- Click any image to view full-size
-- Perfect for visual browsing
-- Press ESC to close full-size view
 
 ### Checking for Duplicates
 
@@ -181,21 +182,24 @@ Take a photo of your sleeve on a solid-color background (like orange, blue, whit
 - Click tag chips to filter by specific categories
 - Click **"Clear"** to reset all filters
 
+### Editing Sleeves
+
+- Find the sleeve in your collection
+- Click **"Edit"** button
+- Update name, description, or tags
+- Click **"Save Changes"**
+
 ## Technical Details
 
-### API Endpoints
+### New API Endpoints
 
-- `GET /` - Main web interface
-- `GET /gallery` - Gallery view (images only)
-- `GET /api/collection` - Get all images (with optional search/tag filters)
 - `POST /api/process-image` - Process an image to auto-crop and straighten
-- `POST /api/upload` - Upload a new image (accepts `auto_process` parameter)
-- `POST /api/check-duplicate` - Check if an image is a duplicate
-- `GET /api/image/<id>` - Get image metadata
-- `PUT /api/image/<id>` - Update image metadata
-- `DELETE /api/image/<id>` - Delete an image
-- `GET /api/tags` - Get all unique tags
-- `GET /collection/<filename>` - Serve image files
+  - Returns: Base64-encoded processed image for preview
+
+### Updated API Endpoints
+
+- `POST /api/upload` - Now accepts `auto_process` parameter
+- `POST /api/check-duplicate` - Now accepts `auto_process` parameter
 
 ### Computer Vision Pipeline
 
@@ -215,7 +219,7 @@ Polygon Approximation → Perspective Transform → Cropped Output
 
 ### Database Schema
 
-Each image entry includes:
+Each image entry now includes:
 ```json
 {
   "id": "unique_id",
@@ -263,12 +267,25 @@ Each image entry includes:
 pip install opencv-python --upgrade
 ```
 
-**Port 5000 already in use**: Edit `app.py` and change the port number:
-```python
-app.run(debug=True, host='0.0.0.0', port=5001)
-```
-
 **Duplicate detection too sensitive**: Increase threshold in code (default is 5)
+
+**Need to process existing images**: Re-upload them with auto-processing enabled
+
+## Comparison: Standard vs Enhanced
+
+### Standard Version
+- ✓ Basic upload and storage
+- ✓ Duplicate detection
+- ✓ Manual cropping needed
+- ✓ Photos must be pre-cleaned
+
+### Enhanced Version
+- ✓ Everything from standard
+- ✓ **Automatic background removal**
+- ✓ **Intelligent cropping**
+- ✓ **Perspective correction**
+- ✓ **Better duplicate detection**
+- ✓ Take quick photos anywhere
 
 ## Performance
 
@@ -276,27 +293,16 @@ app.run(debug=True, host='0.0.0.0', port=5001)
 - **Accuracy**: 95%+ success rate with good photos on solid backgrounds
 - **Scalability**: Handles collections of 1000+ sleeves efficiently
 
-## Example Workflow
+## Future Enhancements
 
-### Initial Collection Setup
-1. Gather all your sleeves
-2. Set up photography station (solid color surface, good lighting)
-3. Take photos of each sleeve
-4. Upload with auto-processing enabled
-5. Add names and tags as you go
-6. View in gallery mode to admire your collection!
-
-### Adding New Purchases
-1. Take quick photo on any solid background
-2. Upload with auto-processing
-3. App auto-checks for duplicates
-4. Add only if not already in collection
-
-### Before Buying Online
-1. Save seller's photo
-2. Upload to "Check Duplicate" tab
-3. See if you already own it
-4. Make informed purchase decision
+Potential additions:
+- Batch auto-processing of existing collection
+- Machine learning for better edge detection
+- Multiple image formats per sleeve
+- Undo/redo for auto-processing
+- Advanced cropping with manual adjustments
+- Color normalization
+- Size standardization
 
 ## Tips for Success
 
@@ -312,17 +318,28 @@ app.run(debug=True, host='0.0.0.0', port=5001)
 2. **Descriptive Names**: Include Pokemon name and key features
 3. **Batch Uploads**: Process similar sleeves together
 4. **Regular Backups**: Copy collection/ and .json file regularly
-5. **Use Gallery View**: Quick visual check of your entire collection
+5. **Test First**: Try auto-processing on a few images before bulk upload
 
-## Future Enhancements
+## Example Workflow
 
-Potential additions:
-- Batch auto-processing of existing collection
-- Export collection to various formats
-- Advanced filtering in gallery view
-- Slideshow mode
-- Comparison view for similar sleeves
-- Print catalog generation
+### Initial Collection Setup
+1. Gather all your sleeves
+2. Set up photography station (solid color surface, good lighting)
+3. Take photos of each sleeve
+4. Upload with auto-processing enabled
+5. Add names and tags as you go
+
+### Adding New Purchases
+1. Take quick photo on any solid background
+2. Upload with auto-processing
+3. App auto-checks for duplicates
+4. Add only if not already in collection
+
+### Before Buying Online
+1. Save seller's photo
+2. Upload to "Check Duplicate" tab
+3. See if you already own it
+4. Make informed purchase decision
 
 ## License
 
@@ -332,4 +349,4 @@ This project is open source and available for personal use.
 
 **Ready to build your perfectly organized sleeve collection?** 🎴✨
 
-Start by taking photos on a solid-colored background and let the app do the rest!
+Start with the QUICKSTART guide and take your first photo on a solid-colored background!

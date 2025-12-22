@@ -195,11 +195,6 @@ def index():
     """Main page"""
     return render_template('index.html')
 
-@app.route('/gallery')
-def gallery_view():
-    """Simple gallery view - images only"""
-    return render_template('gallery.html')
-
 @app.route('/api/collection', methods=['GET'])
 def get_collection():
     """Get all images in the collection"""
@@ -501,6 +496,12 @@ def get_all_tags():
 def serve_image(filename):
     """Serve images from the collection folder"""
     return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
+
+@app.route('/gallery')
+def gallery_view():
+    """Simple gallery view - images only"""
+    return render_template('gallery.html')
+
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5005)

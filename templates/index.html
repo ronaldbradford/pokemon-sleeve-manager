@@ -507,9 +507,9 @@
 
         <div class="controls">
             <div class="tabs">
-                <button class="tab active" onclick="switchTab('browse')">Browse Collection</button>
-                <button class="tab" onclick="switchTab('add')">Add New</button>
-                <button class="tab" onclick="switchTab('check')">Check Duplicate</button>
+                <button class="tab active" onclick="switchTab('browse', event)">Browse Collection</button>
+                <button class="tab" onclick="switchTab('add', event)">Add New</button>
+                <button class="tab" onclick="switchTab('check', event)">Check Duplicate</button>
             </div>
 
             <!-- Browse Tab -->
@@ -527,14 +527,6 @@
 
             <!-- Add New Tab -->
             <div id="add-tab" class="tab-content">
-                <div class="checkbox-group">
-                    <input type="checkbox" id="auto-process-upload" checked>
-                    <label for="auto-process-upload">
-                        🎯 Auto-crop and straighten sleeve from background
-                        <div class="info-text">Best for photos taken on solid color backgrounds (like the orange example)</div>
-                    </label>
-                </div>
-
                 <form id="upload-form" onsubmit="return false;">
                     <div class="upload-area" id="drop-area">
                         <p style="font-size: 48px; margin-bottom: 10px;">📤</p>
@@ -561,31 +553,40 @@
                     </div>
                     
                     <div class="form-group">
-                        <label for="tags-input">Tags (comma-separated)</label>
-                        <input type="text" id="tags-input" placeholder="e.g., pikachu, yellow, ultra pro, electric">
+                        <label for="tags-input">Tags (space-separated)</label>
+                        <input type="text" id="tags-input" placeholder="e.g., pikachu yellow ultra-pro electric">
                     </div>
-                    
-                    <button type="submit" onclick="uploadImage()">Add to Collection</button>
+
+                    <div style="display: flex; align-items: center; gap: 15px; flex-wrap: wrap;">
+                        <label style="display: flex; align-items: center; gap: 5px; margin: 0; cursor: pointer; font-weight: normal;">
+                            <input type="checkbox" id="auto-process-upload" style="width: auto; margin: 0;">
+                            <span>Auto-crop and straighten</span>
+                        </label>
+                        <button type="submit" onclick="uploadImage()">Add to Collection</button>
+                        <label style="display: flex; align-items: center; gap: 5px; margin: 0; cursor: pointer; font-weight: normal;">
+                            <input type="checkbox" id="add-another" checked style="width: auto; margin: 0;">
+                            <span>Add another</span>
+                        </label>
+                    </div>
                 </form>
             </div>
 
             <!-- Check Duplicate Tab -->
             <div id="check-tab" class="tab-content">
-                <div class="checkbox-group">
-                    <input type="checkbox" id="auto-process-check" checked>
-                    <label for="auto-process-check">
-                        🎯 Auto-crop and straighten for better comparison
-                        <div class="info-text">Recommended for accurate duplicate detection</div>
-                    </label>
-                </div>
-
                 <div class="upload-area" id="check-drop-area">
                     <p style="font-size: 48px; margin-bottom: 10px;">🔍</p>
                     <p style="font-size: 18px; color: #667eea; margin-bottom: 10px;">Upload an image to check for duplicates</p>
                     <p style="color: #999; font-size: 14px;">This will search your collection for similar images</p>
                     <input type="file" id="check-file-input" accept="image/*" style="display: none;">
                 </div>
-                
+
+                <div style="margin-top: 15px;">
+                    <label style="display: flex; align-items: center; gap: 5px; cursor: pointer; font-weight: normal;">
+                        <input type="checkbox" id="auto-process-check" checked style="width: auto; margin: 0;">
+                        <span>Auto-crop and straighten for better comparison</span>
+                    </label>
+                </div>
+
                 <div id="check-preview" class="preview-container">
                     <div class="preview-label">
                         <span>✅ Processed Image</span>
@@ -616,6 +617,26 @@
             </div>
             <form id="edit-form" onsubmit="return false;">
                 <input type="hidden" id="edit-id">
+                <input type="hidden" id="edit-filename">
+
+                <div style="margin-bottom: 20px; text-align: center;">
+                    <img id="edit-current-image" style="max-width: 100%; max-height: 300px; border-radius: 8px; box-shadow: 0 5px 15px rgba(0,0,0,0.1);" alt="Current image">
+                </div>
+
+                <div style="margin-bottom: 15px;">
+                    <label style="display: flex; align-items: center; gap: 5px; cursor: pointer; font-weight: normal;">
+                        <input type="checkbox" id="edit-auto-process" onchange="processEditImage()" style="width: auto; margin: 0;">
+                        <span>Auto-crop and straighten</span>
+                    </label>
+                </div>
+
+                <div id="edit-preview" class="preview-container">
+                    <div class="preview-label">
+                        <span>✅ Processed Preview</span>
+                    </div>
+                    <img id="edit-preview-img" class="preview-image" alt="Processed preview">
+                </div>
+
                 <div class="form-group">
                     <label for="edit-name">Name</label>
                     <input type="text" id="edit-name">
@@ -625,11 +646,27 @@
                     <textarea id="edit-description"></textarea>
                 </div>
                 <div class="form-group">
-                    <label for="edit-tags">Tags (comma-separated)</label>
+                    <label for="edit-tags">Tags (space-separated)</label>
                     <input type="text" id="edit-tags">
                 </div>
                 <button onclick="saveEdit()">Save Changes</button>
             </form>
+        </div>
+    </div>
+
+    <!-- Duplicate Confirmation Modal -->
+    <div id="duplicate-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>⚠️ Similar Sleeve Found</h2>
+                <button class="close-modal" onclick="closeDuplicateModal()">×</button>
+            </div>
+            <p style="margin-bottom: 20px; color: #856404;">This image appears to already be in your collection:</p>
+            <div id="duplicate-card-container" style="margin-bottom: 20px;"></div>
+            <div style="display: flex; gap: 10px;">
+                <button onclick="addAnyway()" style="flex: 1; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">Add Anyway</button>
+                <button onclick="closeDuplicateModal()" style="flex: 1; background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">Cancel</button>
+            </div>
         </div>
     </div>
 
@@ -638,13 +675,21 @@
         let currentFilter = '';
         let currentTag = '';
         let processedImageData = null;
+        let pendingUploadData = null;
 
         // Tab switching
-        function switchTab(tabName) {
+        function switchTab(tabName, event) {
             document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
             document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
-            
-            event.target.classList.add('active');
+
+            // Find and activate the correct tab button
+            const tabButtons = document.querySelectorAll('.tab');
+            tabButtons.forEach(tab => {
+                if (tab.textContent.toLowerCase().includes(tabName)) {
+                    tab.classList.add('active');
+                }
+            });
+
             document.getElementById(tabName + '-tab').classList.add('active');
         }
 
@@ -853,7 +898,7 @@
         }
 
         // Upload image
-        async function uploadImage() {
+        async function uploadImage(forceDuplicate = false) {
             const fileInput = document.getElementById('file-input');
             const name = document.getElementById('name-input').value;
             const description = document.getElementById('description-input').value;
@@ -871,6 +916,9 @@
             formData.append('description', description);
             formData.append('tags', tags);
             formData.append('auto_process', autoProcess);
+            if (forceDuplicate) {
+                formData.append('force_duplicate', 'true');
+            }
 
             try {
                 const response = await fetch('/api/upload', {
@@ -880,8 +928,12 @@
 
                 const data = await response.json();
 
-                if (response.status === 409) {
-                    showMessage(`⚠️ ${data.message} Similar sleeve: "${data.similar.filename}"`, 'warning');
+                if (response.status === 409 && !forceDuplicate) {
+                    // Store the pending upload data
+                    pendingUploadData = { fileInput, name, description, tags, autoProcess };
+
+                    // Show duplicate modal with the similar image
+                    showDuplicateModal(data.similar);
                     return;
                 }
 
@@ -890,13 +942,68 @@
                     document.getElementById('upload-form').reset();
                     document.getElementById('upload-preview').classList.remove('active');
                     loadCollection();
-                    switchTab('browse');
+
+                    // Check if "add another" is checked
+                    const addAnother = document.getElementById('add-another').checked;
+
+                    // Reset the add-another checkbox to checked state
+                    document.getElementById('add-another').checked = true;
+
+                    // Only switch to browse if not adding another
+                    if (!addAnother) {
+                        switchTab('browse');
+                    }
                 } else {
                     showMessage('Error: ' + data.error, 'error');
                 }
             } catch (error) {
                 showMessage('Upload failed: ' + error.message, 'error');
             }
+        }
+
+        // Show duplicate modal
+        function showDuplicateModal(similar) {
+            const container = document.getElementById('duplicate-card-container');
+            const img = allImages.find(i => i.id === similar.id);
+
+            if (img) {
+                container.innerHTML = `
+                    <div class="card" style="max-width: 400px; margin: 0 auto;">
+                        <img src="/collection/${img.filename}" alt="${img.name || 'Sleeve'}" class="card-image">
+                        <div class="card-body">
+                            <div class="card-title">${img.name || img.original_filename}</div>
+                            ${img.description ? `<div class="card-description">${img.description}</div>` : ''}
+                            ${img.tags && img.tags.length > 0 ? `
+                                <div class="card-tags">
+                                    ${img.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
+                                </div>
+                            ` : ''}
+                        </div>
+                    </div>
+                `;
+            } else {
+                container.innerHTML = `
+                    <div style="text-align: center;">
+                        <img src="/collection/${similar.filename}" alt="Similar" style="max-width: 300px; border-radius: 8px;">
+                        <p style="margin-top: 10px;">Similarity: ${Math.round((10 - similar.distance) / 10 * 100)}%</p>
+                    </div>
+                `;
+            }
+
+            document.getElementById('duplicate-modal').classList.add('active');
+        }
+
+        // Close duplicate modal
+        function closeDuplicateModal() {
+            document.getElementById('duplicate-modal').classList.remove('active');
+            pendingUploadData = null;
+        }
+
+        // Add anyway
+        async function addAnyway() {
+            closeDuplicateModal();
+            // Retry upload with force flag
+            await uploadImage(true);
         }
 
         // Check for duplicate
@@ -1000,10 +1107,16 @@
             if (!image) return;
 
             document.getElementById('edit-id').value = id;
+            document.getElementById('edit-filename').value = image.filename;
             document.getElementById('edit-name').value = image.name || '';
             document.getElementById('edit-description').value = image.description || '';
-            document.getElementById('edit-tags').value = (image.tags || []).join(', ');
-            
+            document.getElementById('edit-tags').value = (image.tags || []).join(' ');
+            document.getElementById('edit-auto-process').checked = false;
+            document.getElementById('edit-preview').classList.remove('active');
+
+            // Display current image
+            document.getElementById('edit-current-image').src = `/collection/${image.filename}`;
+
             document.getElementById('edit-modal').classList.add('active');
         }
 
@@ -1011,11 +1124,53 @@
             document.getElementById('edit-modal').classList.remove('active');
         }
 
+        async function processEditImage() {
+            const checked = document.getElementById('edit-auto-process').checked;
+            const previewContainer = document.getElementById('edit-preview');
+            const previewImg = document.getElementById('edit-preview-img');
+            const filename = document.getElementById('edit-filename').value;
+
+            if (!checked) {
+                previewContainer.classList.remove('active');
+                return;
+            }
+
+            try {
+                // Fetch the current image and process it
+                const response = await fetch(`/collection/${filename}`);
+                const blob = await response.blob();
+                const file = new File([blob], filename, { type: blob.type });
+
+                const formData = new FormData();
+                formData.append('file', file);
+
+                const processResponse = await fetch('/api/process-image', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await processResponse.json();
+
+                if (data.success && data.processed) {
+                    previewImg.src = data.image_data;
+                    previewContainer.classList.add('active');
+                    showMessage('✨ Preview generated!', 'info');
+                } else {
+                    showMessage(data.message || 'Could not process image', 'info');
+                    document.getElementById('edit-auto-process').checked = false;
+                }
+            } catch (error) {
+                showMessage('Error processing image: ' + error.message, 'error');
+                document.getElementById('edit-auto-process').checked = false;
+            }
+        }
+
         async function saveEdit() {
             const id = document.getElementById('edit-id').value;
             const name = document.getElementById('edit-name').value;
             const description = document.getElementById('edit-description').value;
-            const tags = document.getElementById('edit-tags').value.split(',').map(t => t.trim()).filter(t => t);
+            const tags = document.getElementById('edit-tags').value.split(/\s+/).filter(t => t);
+            const reprocess = document.getElementById('edit-auto-process').checked;
 
             try {
                 const response = await fetch(`/api/image/${id}`, {
@@ -1023,7 +1178,7 @@
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({ name, description, tags })
+                    body: JSON.stringify({ name, description, tags, reprocess })
                 });
 
                 if (response.ok) {

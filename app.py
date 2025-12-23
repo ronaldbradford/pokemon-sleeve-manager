@@ -295,41 +295,45 @@ def upload_image():
     name = request.form.get('name', '')
     description = request.form.get('description', '')
     tags = request.form.get('tags', '')
-    tags_list = [tag.strip() for tag in tags.split(',') if tag.strip()]
+    tags_list = [tag.strip() for tag in tags.split() if tag.strip()]
     auto_process = request.form.get('auto_process', 'true').lower() == 'true'
-    
+    force_duplicate = request.form.get('force_duplicate', 'false').lower() == 'true'
+
     # Save file temporarily to process
     temp_filename = secure_filename(file.filename)
     temp_path = os.path.join(app.config['UPLOAD_FOLDER'], 'temp_' + temp_filename)
     file.save(temp_path)
-    
+
     try:
         # Auto-process if requested
         processed_path = temp_path
         was_processed = False
-        
+
         if auto_process:
             processed_path, was_processed = auto_crop_sleeve(temp_path)
-        
+
         # Compute image hash on the final image
         image_hashes = compute_image_hash(processed_path)
-        
-        # Check for duplicates
+
+        # Load database
         db = load_database()
-        similar = find_similar_images(image_hashes, db, threshold=5)
-        
-        if similar and similar[0]['distance'] <= 3:
-            # Very similar image found
-            if os.path.exists(temp_path):
-                os.remove(temp_path)
-            if was_processed and os.path.exists(processed_path):
-                os.remove(processed_path)
-            return jsonify({
-                'duplicate': True,
-                'similar': similar[0],
-                'message': 'This image appears to already be in your collection!'
-            }), 409
-        
+
+        # Check for duplicates (unless force_duplicate is true)
+        if not force_duplicate:
+            similar = find_similar_images(image_hashes, db, threshold=5)
+
+            if similar and similar[0]['distance'] <= 3:
+                # Very similar image found
+                if os.path.exists(temp_path):
+                    os.remove(temp_path)
+                if was_processed and os.path.exists(processed_path):
+                    os.remove(processed_path)
+                return jsonify({
+                    'duplicate': True,
+                    'similar': similar[0],
+                    'message': 'This image appears to already be in your collection!'
+                }), 409
+
         # Generate unique ID and filename
         image_id = hashlib.md5(f"{datetime.now().isoformat()}{temp_filename}".encode()).hexdigest()[:12]
         ext = temp_filename.rsplit('.', 1)[1].lower()
@@ -465,10 +469,35 @@ def manage_image(image_id):
             image['description'] = data['description']
         if 'tags' in data:
             image['tags'] = data['tags']
-        
+
+        # Reprocess image if requested
+        if data.get('reprocess', False):
+            current_path = os.path.join(app.config['UPLOAD_FOLDER'], image['filename'])
+            if os.path.exists(current_path):
+                try:
+                    # Process the existing image
+                    processed_path, was_processed = auto_crop_sleeve(current_path)
+
+                    if was_processed and processed_path != current_path:
+                        # Replace the original with the processed version
+                        if os.path.exists(processed_path):
+                            os.remove(current_path)
+                            os.rename(processed_path, current_path)
+
+                            # Update image hashes
+                            image['hashes'] = compute_image_hash(current_path)
+                            image['file_size'] = os.path.getsize(current_path)
+                            image['was_auto_processed'] = True
+                    else:
+                        # Clean up if processing failed or wasn't needed
+                        if processed_path != current_path and os.path.exists(processed_path):
+                            os.remove(processed_path)
+                except Exception as e:
+                    print(f"Error reprocessing image: {e}")
+
         image['modified_date'] = datetime.now().isoformat()
         save_database(db)
-        
+
         return jsonify({'success': True, 'image': image})
     
     elif request.method == 'DELETE':

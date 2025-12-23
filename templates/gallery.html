@@ -155,9 +155,67 @@
             transform: rotate(90deg);
         }
 
+        .nav-arrow {
+            position: fixed;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255, 255, 255, 0.9);
+            border: none;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            font-size: 32px;
+            cursor: pointer;
+            color: #333;
+            transition: all 0.3s;
+            z-index: 1001;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .nav-arrow:hover {
+            background: #667eea;
+            color: white;
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        .nav-arrow:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .nav-arrow:disabled:hover {
+            background: rgba(255, 255, 255, 0.9);
+            color: #333;
+            transform: translateY(-50%) scale(1);
+        }
+
+        .nav-arrow.left {
+            left: 20px;
+        }
+
+        .nav-arrow.right {
+            right: 20px;
+        }
+
         @media (max-width: 768px) {
             .gallery {
                 grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            }
+
+            .nav-arrow {
+                width: 45px;
+                height: 45px;
+                font-size: 24px;
+            }
+
+            .nav-arrow.left {
+                left: 10px;
+            }
+
+            .nav-arrow.right {
+                right: 10px;
             }
         }
     </style>
@@ -177,6 +235,8 @@
     <!-- Full-size image modal -->
     <div id="modal" class="modal" onclick="closeModal()">
         <button class="close-modal" onclick="closeModal()">×</button>
+        <button class="nav-arrow left" id="prev-btn" onclick="event.stopPropagation(); previousImage()">‹</button>
+        <button class="nav-arrow right" id="next-btn" onclick="event.stopPropagation(); nextImage()">›</button>
         <div class="modal-content" onclick="event.stopPropagation()">
             <img id="modal-image" class="modal-image" alt="Full size">
         </div>
@@ -184,6 +244,7 @@
 
     <script>
         let allImages = [];
+        let currentImageIndex = 0;
 
         // Load collection
         async function loadGallery() {
@@ -206,7 +267,7 @@
         // Display gallery
         function displayGallery(images) {
             const gallery = document.getElementById('gallery');
-            
+
             if (images.length === 0) {
                 gallery.innerHTML = `
                     <div class="empty-state">
@@ -217,16 +278,17 @@
                 return;
             }
 
-            gallery.innerHTML = images.map(img => `
-                <div class="gallery-item" onclick="openModal('/collection/${img.filename}')">
+            gallery.innerHTML = images.map((img, index) => `
+                <div class="gallery-item" onclick="openModal(${index})">
                     <img src="/collection/${img.filename}" alt="Sleeve" loading="lazy">
                 </div>
             `).join('');
         }
 
         // Modal functions
-        function openModal(imageSrc) {
-            document.getElementById('modal-image').src = imageSrc;
+        function openModal(index) {
+            currentImageIndex = index;
+            updateModalImage();
             document.getElementById('modal').classList.add('active');
         }
 
@@ -234,10 +296,42 @@
             document.getElementById('modal').classList.remove('active');
         }
 
+        function updateModalImage() {
+            if (allImages.length === 0) return;
+
+            const img = allImages[currentImageIndex];
+            document.getElementById('modal-image').src = '/collection/' + img.filename;
+
+            // Update button states
+            document.getElementById('prev-btn').disabled = currentImageIndex === 0;
+            document.getElementById('next-btn').disabled = currentImageIndex === allImages.length - 1;
+        }
+
+        function previousImage() {
+            if (currentImageIndex > 0) {
+                currentImageIndex--;
+                updateModalImage();
+            }
+        }
+
+        function nextImage() {
+            if (currentImageIndex < allImages.length - 1) {
+                currentImageIndex++;
+                updateModalImage();
+            }
+        }
+
         // Keyboard navigation
         document.addEventListener('keydown', (e) => {
+            const modal = document.getElementById('modal');
+            if (!modal.classList.contains('active')) return;
+
             if (e.key === 'Escape') {
                 closeModal();
+            } else if (e.key === 'ArrowLeft') {
+                previousImage();
+            } else if (e.key === 'ArrowRight') {
+                nextImage();
             }
         });
 

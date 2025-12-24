@@ -16,12 +16,12 @@ pip install -r requirements.txt --break-system-packages
 ### Step 2: Start the Server
 #### Option A - Use the startup script (Linux/Mac):
 ```bash
-./start.sh
+./bin/start.sh
 ```
 
 #### Option B - Run directly (All platforms):
 ```bash
-python app.py
+python src/app.py
 ```
 
 
@@ -142,7 +142,7 @@ You'll see checkboxes for auto-processing in two places:
 - Disable auto-processing and upload as-is
 
 **Port 5000 already in use?**
-Edit `app_enhanced.py` and change the port:
+Edit `src/app.py` and change the port:
 ```python
 app.run(debug=True, host='0.0.0.0', port=5001)  # Changed to 5001
 ```
@@ -158,7 +158,10 @@ pip install opencv-python --upgrade
 
 ```
 pokemon-sleeve-manager/
-├── app.py                      # Main application with CV features
+├── src/
+│   └── app.py                  # Main application with CV features
+├── bin/
+│   └── start.sh                # Startup script
 ├── templates/
 │   ├── index.html              # Standard interface
 │   └── index_enhanced.html     # Enhanced interface with processing

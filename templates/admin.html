@@ -13,77 +13,28 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #6798A3 0%, #236271 100%);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             padding: 20px;
         }
 
-        @media (max-width: 768px) {
-            body {
-                padding: 10px;
-            }
-            
-            .container {
-                padding: 0 10px;
-            }
-
-            .image-view-content {
-                padding: 40px 20px 20px;
-            }
-
-            .image-nav {
-                width: 40px;
-                height: 40px;
-                font-size: 20px;
-            }
-
-            .image-nav.prev {
-                left: 10px;
-            }
-
-            .image-nav.next {
-                right: 10px;
-            }
-
-            .image-view-close {
-                top: 10px;
-                right: 10px;
-                width: 35px;
-                height: 35px;
-                font-size: 20px;
-            }
-
-            .image-view-image {
-                max-height: 60vh;
-            }
-
-            .image-view-title {
-                font-size: 20px;
-            }
-
-            .image-view-description {
-                font-size: 14px;
-            }
-        }
-
         .container {
-            width: 100%;
+            max-width: 1400px;
             margin: 0 auto;
-            padding: 0 20px;
         }
 
         header {
             background: white;
-            padding: 20px;
+            padding: 30px;
             border-radius: 15px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-            margin-bottom: 20px;
+            margin-bottom: 30px;
         }
 
         h1 {
-            color: #02313C;
-            font-size: 2em;
-            margin-bottom: 5px;
+            color: #667eea;
+            font-size: 2.5em;
+            margin-bottom: 10px;
         }
 
         .subtitle {
@@ -93,7 +44,7 @@
 
         .feature-badge {
             display: inline-block;
-            background: linear-gradient(135deg, #3D7886 0%, #236271 100%);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             padding: 6px 12px;
             border-radius: 20px;
@@ -129,13 +80,13 @@
         }
 
         .tab.active {
-            color: #3D7886;
-            border-bottom-color: #3D7886;
+            color: #667eea;
+            border-bottom-color: #667eea;
             font-weight: bold;
         }
 
         .tab:hover {
-            color: #3D7886;
+            color: #667eea;
         }
 
         .tab-content {
@@ -147,23 +98,23 @@
         }
 
         .upload-area {
-            border: 3px dashed #3D7886;
+            border: 3px dashed #667eea;
             border-radius: 10px;
             padding: 40px;
             text-align: center;
             cursor: pointer;
             transition: all 0.3s;
-            background: #f0f5f7;
+            background: #f8f9ff;
         }
 
         .upload-area:hover {
-            border-color: #236271;
-            background: #e8f0f3;
+            border-color: #764ba2;
+            background: #f0f2ff;
         }
 
         .upload-area.dragover {
-            background: #dde8ec;
-            border-color: #236271;
+            background: #e8ebff;
+            border-color: #764ba2;
         }
 
         .form-group {
@@ -191,7 +142,7 @@
         input[type="text"]:focus,
         textarea:focus {
             outline: none;
-            border-color: #3D7886;
+            border-color: #667eea;
         }
 
         textarea {
@@ -205,9 +156,9 @@
             gap: 10px;
             margin-bottom: 20px;
             padding: 15px;
-            background: #f0f5f7;
+            background: #f8f9ff;
             border-radius: 8px;
-            border: 2px solid #dde8ec;
+            border: 2px solid #e8ebff;
         }
 
         .checkbox-group input[type="checkbox"] {
@@ -229,7 +180,7 @@
         }
 
         button {
-            background: linear-gradient(135deg, #3D7886 0%, #236271 100%);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             border: none;
             padding: 12px 30px;
@@ -242,7 +193,7 @@
 
         button:hover {
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(61, 120, 134, 0.4);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
         }
 
         button:disabled {
@@ -264,37 +215,33 @@
         .tag-filter {
             display: flex;
             flex-wrap: wrap;
-            gap: 5px 15px;
-            margin-bottom: 15px;
-            font-size: 13px;
+            gap: 10px;
+            margin-bottom: 20px;
         }
 
         .tag-chip {
-            padding: 2px 8px;
-            background: none;
-            border: none;
-            border-radius: 0;
+            padding: 8px 16px;
+            background: #e8ebff;
+            border: 2px solid #667eea;
+            border-radius: 20px;
             cursor: pointer;
             transition: all 0.3s;
-            font-size: 13px;
-            color: #3D7886;
-            text-decoration: underline;
+            font-size: 14px;
+            color: #667eea;
         }
 
         .tag-chip:hover,
         .tag-chip.active {
-            background: none;
-            color: #236271;
-            text-decoration: none;
-            font-weight: 600;
+            background: #667eea;
+            color: white;
         }
 
         .preview-container {
             margin: 20px 0;
             padding: 20px;
-            background: #f0f5f7;
+            background: #f8f9ff;
             border-radius: 10px;
-            border: 2px solid #dde8ec;
+            border: 2px solid #e8ebff;
             display: none;
         }
 
@@ -311,7 +258,7 @@
 
         .preview-label {
             font-weight: 600;
-            color: #3D7886;
+            color: #667eea;
             margin-bottom: 10px;
             display: flex;
             align-items: center;
@@ -320,15 +267,8 @@
 
         .gallery {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 15px;
-        }
-
-        @media (max-width: 768px) {
-            .gallery {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 10px;
-            }
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 25px;
         }
 
         .card:hover {
@@ -355,41 +295,40 @@
             /* Ensure the card flexes naturally with the aspect-ratio image */
             display: flex;
             flex-direction: column;
-            cursor: pointer;
         }
 
         .card-body {
-            padding: 10px;
+            padding: 15px;
         }
 
         .card-title {
-            font-size: 14px;
+            font-size: 18px;
             font-weight: bold;
             color: #333;
-            margin-bottom: 5px;
+            margin-bottom: 8px;
         }
 
         .card-description {
             color: #666;
-            font-size: 12px;
-            margin-bottom: 6px;
-            line-height: 1.3;
+            font-size: 14px;
+            margin-bottom: 10px;
+            line-height: 1.4;
         }
 
         .card-tags {
             display: flex;
             flex-wrap: wrap;
-            gap: 4px 8px;
-            margin-bottom: 6px;
+            gap: 5px;
+            margin-bottom: 10px;
         }
 
         .tag {
-            background: none;
-            color: #3D7886;
-            padding: 0;
-            border-radius: 0;
-            font-size: 11px;
-            font-weight: 400;
+            background: #e8ebff;
+            color: #667eea;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
         }
 
         .card-badge {
@@ -416,7 +355,7 @@
         }
 
         .btn-delete {
-            background: linear-gradient(135deg, #104A58 0%, #02313C 100%);
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
         }
 
         .message {
@@ -458,7 +397,7 @@
 
         .spinner {
             border: 4px solid #f3f3f3;
-            border-top: 4px solid #3D7886;
+            border-top: 4px solid #667eea;
             border-radius: 50%;
             width: 40px;
             height: 40px;
@@ -498,127 +437,6 @@
             overflow-y: auto;
         }
 
-        .image-view-modal {
-            background: rgba(0,0,0,0.95);
-            z-index: 2000;
-        }
-
-        .image-view-content {
-            background: transparent;
-            max-width: 90vw;
-            max-height: 90vh;
-            width: auto;
-            height: auto;
-            padding: 60px 80px 20px;
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .image-view-image {
-            max-width: 100%;
-            max-height: 70vh;
-            object-fit: contain;
-            border-radius: 8px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
-            margin-bottom: 20px;
-        }
-
-        .image-view-info {
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            width: 100%;
-            max-width: 600px;
-            text-align: center;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
-        }
-
-        .image-view-title {
-            font-size: 24px;
-            font-weight: bold;
-            color: #02313C;
-            margin-bottom: 10px;
-        }
-
-        .image-view-description {
-            color: #666;
-            font-size: 16px;
-            margin-bottom: 15px;
-            line-height: 1.5;
-        }
-
-        .image-view-tags {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            justify-content: center;
-            margin-bottom: 20px;
-        }
-
-        .image-view-tag {
-            color: #3D7886;
-            font-size: 14px;
-        }
-
-        .image-nav {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            background: rgba(255,255,255,0.9);
-            border: none;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            font-size: 24px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s;
-            z-index: 10;
-        }
-
-        .image-nav:hover {
-            background: white;
-            transform: translateY(-50%) scale(1.1);
-        }
-
-        .image-nav.prev {
-            left: 20px;
-        }
-
-        .image-nav.next {
-            right: 20px;
-        }
-
-        .image-nav:disabled {
-            opacity: 0.3;
-            cursor: not-allowed;
-        }
-
-        .image-view-close {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            background: rgba(255,255,255,0.9);
-            border: none;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            font-size: 24px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 10;
-        }
-
-        .image-view-close:hover {
-            background: white;
-        }
-
         .modal-header {
             display: flex;
             justify-content: space-between;
@@ -653,7 +471,7 @@
         }
 
         .similar-card:hover {
-            border-color: #3D7886;
+            border-color: #667eea;
         }
 
         .similar-image {
@@ -666,7 +484,7 @@
             padding: 8px;
             font-size: 12px;
             text-align: center;
-            background: #f0f5f7;
+            background: #f8f9ff;
         }
 
         .empty-state {
@@ -704,30 +522,27 @@
 <body>
     <div class="container">
         <header>
-            <h1>🎴 Pokemon Sleeve Collection</h1>
-            <p class="subtitle">Manage, search, and organize your Pokemon card sleeves</p>
+            <h1>🔐 Admin - Pokemon Sleeve Collection</h1>
+            <p class="subtitle">Add new sleeves, check for duplicates, and manage your collection</p>
+            <div style="margin-top: 15px;">
+                <span class="feature-badge">✨ Auto Crop & Straighten</span>
+                <a href="/" class="feature-badge" style="text-decoration: none; margin-left: 10px; background: linear-gradient(135deg, #4caf50 0%, #45a049 100%);">🏠 Public View</a>
+                <a href="/gallery" class="feature-badge" style="text-decoration: none; margin-left: 10px; background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">🖼️ Gallery View</a>
+            </div>
         </header>
 
         <div class="controls">
-            <div class="search-bar">
-                <input type="text" id="search-input" placeholder="Search by name, description, or tags...">
-                <button onclick="searchCollection()">Search</button>
-                <button onclick="clearSearch()">Clear</button>
+            <div class="tabs">
+                <button class="tab active" onclick="switchTab('add', event)">Add New</button>
+                <button class="tab" onclick="switchTab('check', event)">Check Duplicate</button>
             </div>
-           
-            <div id="tag-filter-container" class="tag-filter"></div>
-           
-            <div id="collection-stats" style="margin-bottom: 15px; color: #666;"></div>
-        </div>
 
-        <!-- Hidden tabs for reference (not displayed) -->
-        <div style="display: none;">
             <!-- Add New Tab -->
-            <div id="add-tab" class="tab-content">
+            <div id="add-tab" class="tab-content active">
                 <form id="upload-form" onsubmit="return false;">
                     <div class="upload-area" id="drop-area">
                         <p style="font-size: 48px; margin-bottom: 10px;">📤</p>
-                        <p style="font-size: 18px; color: #3D7886; margin-bottom: 10px;">Click to upload or drag and drop</p>
+                        <p style="font-size: 18px; color: #667eea; margin-bottom: 10px;">Click to upload or drag and drop</p>
                         <p style="color: #999; font-size: 14px;">PNG, JPG, GIF, WEBP (Max 16MB)</p>
                         <input type="file" id="file-input" accept="image/*" style="display: none;">
                     </div>
@@ -738,8 +553,6 @@
                         </div>
                         <img id="upload-preview-img" class="preview-image" alt="Preview">
                     </div>
-
-                    <div id="upload-duplicate-results" style="display: none; margin-top: 15px;"></div>
 
                     <div class="form-group">
                         <label for="name-input">Sleeve Name</label>
@@ -774,7 +587,7 @@
             <div id="check-tab" class="tab-content">
                 <div class="upload-area" id="check-drop-area">
                     <p style="font-size: 48px; margin-bottom: 10px;">🔍</p>
-                    <p style="font-size: 18px; color: #3D7886; margin-bottom: 10px;">Upload an image to check for duplicates</p>
+                    <p style="font-size: 18px; color: #667eea; margin-bottom: 10px;">Upload an image to check for duplicates</p>
                     <p style="color: #999; font-size: 14px;">This will search your collection for similar images</p>
                     <input type="file" id="check-file-input" accept="image/*" style="display: none;">
                 </div>
@@ -797,6 +610,18 @@
             </div>
         </div>
 
+        <div class="controls" style="margin-top: 30px;">
+            <div class="search-bar">
+                <input type="text" id="search-input" placeholder="Search by name, description, or tags...">
+                <button onclick="searchCollection()">Search</button>
+                <button onclick="clearSearch()">Clear</button>
+            </div>
+           
+            <div id="tag-filter-container" class="tag-filter"></div>
+           
+            <div id="collection-stats" style="margin-bottom: 15px; color: #666;"></div>
+        </div>
+
         <div id="message-container"></div>
 
         <div id="gallery" class="gallery">
@@ -807,18 +632,52 @@
         </div>
     </div>
 
-    <!-- Image View Modal -->
-    <div id="image-view-modal" class="modal image-view-modal" onclick="if(event.target === this) closeImageView()">
-        <div class="image-view-content" onclick="event.stopPropagation()">
-            <button class="image-view-close" onclick="closeImageView()">×</button>
-            <button id="image-nav-prev" class="image-nav prev" onclick="navigateImage('prev')">‹</button>
-            <button id="image-nav-next" class="image-nav next" onclick="navigateImage('next')">›</button>
-            <img id="image-view-img" class="image-view-image" alt="Sleeve image">
-            <div class="image-view-info">
-                <div id="image-view-title" class="image-view-title"></div>
-                <div id="image-view-description" class="image-view-description"></div>
-                <div id="image-view-tags" class="image-view-tags"></div>
+    <!-- Edit Modal -->
+    <div id="edit-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Edit Sleeve</h2>
+                <button class="close-modal" onclick="closeEditModal()">×</button>
             </div>
+            <form id="edit-form" onsubmit="return false;">
+                <input type="hidden" id="edit-id">
+                <input type="hidden" id="edit-filename">
+           
+                <div class="edit-preview-layout">
+                    <div class="edit-image-container">
+                        <div class="preview-label">Current Sleeve</div>
+                        <img id="edit-current-image" style="max-width: 100%; max-height: 300px; border-radius: 8px; box-shadow: 0 5px 15px rgba(0,0,0,0.1);" alt="Current image">
+                    </div>
+           
+                    <div id="edit-preview" class="preview-container">
+                        <div class="preview-label">
+                            <span>✅ Processed Preview</span>
+                        </div>
+                        <img id="edit-preview-img" class="preview-image" style="max-height: 300px;" alt="Processed preview">
+                    </div>
+                </div>
+           
+                <div style="margin-bottom: 15px;">
+                    <label style="display: flex; align-items: center; gap: 5px; cursor: pointer; font-weight: normal;">
+                        <input type="checkbox" id="edit-auto-process" onchange="processEditImage()" style="width: auto; margin: 0;">
+                        <span>Auto-crop and straighten</span>
+                    </label>
+                </div>
+
+                <div class="form-group">
+                    <label for="edit-name">Name</label>
+                    <input type="text" id="edit-name">
+                </div>
+                <div class="form-group">
+                    <label for="edit-description">Description</label>
+                    <textarea id="edit-description"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="edit-tags">Tags (space-separated)</label>
+                    <input type="text" id="edit-tags">
+                </div>
+                <button onclick="saveEdit()">Save Changes</button>
+            </form>
         </div>
     </div>
 
@@ -832,8 +691,8 @@
             <p style="margin-bottom: 20px; color: #856404;">This image appears to already be in your collection:</p>
             <div id="duplicate-card-container" style="margin-bottom: 20px;"></div>
             <div style="display: flex; gap: 10px;">
-                <button onclick="addAnyway()" style="flex: 1; background: linear-gradient(135deg, #3D7886 0%, #236271 100%);">Add Anyway</button>
-                <button onclick="closeDuplicateModal()" style="flex: 1; background: linear-gradient(135deg, #104A58 0%, #02313C 100%);">Cancel</button>
+                <button onclick="addAnyway()" style="flex: 1; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">Add Anyway</button>
+                <button onclick="closeDuplicateModal()" style="flex: 1; background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">Cancel</button>
             </div>
         </div>
     </div>
@@ -845,9 +704,20 @@
         let processedImageData = null;
         let pendingUploadData = null;
 
-        // Tab switching (not used on index page, but kept for compatibility)
+        // Tab switching
         function switchTab(tabName, event) {
-            // Tabs removed from index page
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+
+            // Find and activate the correct tab button
+            const tabButtons = document.querySelectorAll('.tab');
+            tabButtons.forEach(tab => {
+                if (tab.textContent.toLowerCase().includes(tabName)) {
+                    tab.classList.add('active');
+                }
+            });
+
+            document.getElementById(tabName + '-tab').classList.add('active');
         }
 
         // File upload drag and drop
@@ -924,8 +794,6 @@
                         processedImageData = data.image_data;
                         previewContainer.classList.add('active');
                         showMessage('✨ Image processed! Ready to add.', 'info');
-                        // Check for duplicates after processing
-                        checkUploadDuplicate();
                     } else {
                         // Show original image
                         const reader = new FileReader();
@@ -933,8 +801,6 @@
                             previewImg.src = e.target.result;
                             processedImageData = null;
                             previewContainer.classList.add('active');
-                            // Check for duplicates after image loads
-                            checkUploadDuplicate();
                         };
                         reader.readAsDataURL(fileInput.files[0]);
                        
@@ -952,79 +818,8 @@
                     previewImg.src = e.target.result;
                     processedImageData = null;
                     previewContainer.classList.add('active');
-                    // Check for duplicates after image loads
-                    checkUploadDuplicate();
                 };
                 reader.readAsDataURL(fileInput.files[0]);
-            }
-        }
-
-        // Check for duplicates in upload form
-        async function checkUploadDuplicate() {
-            const fileInput = document.getElementById('file-input');
-            const duplicateResultsDiv = document.getElementById('upload-duplicate-results');
-            const autoProcess = document.getElementById('auto-process-upload').checked;
-
-            if (!fileInput.files[0]) {
-                if (duplicateResultsDiv) duplicateResultsDiv.style.display = 'none';
-                return;
-            }
-
-            if (!duplicateResultsDiv) return;
-            duplicateResultsDiv.style.display = 'block';
-            duplicateResultsDiv.innerHTML = '<div class="loading"><div class="spinner"></div><p>Checking for duplicates...</p></div>';
-
-            const formData = new FormData();
-            formData.append('file', fileInput.files[0]);
-            formData.append('auto_process', autoProcess);
-
-            try {
-                const response = await fetch('/api/check-duplicate', {
-                    method: 'POST',
-                    body: formData
-                });
-
-                const data = await response.json();
-
-                // Store duplicate info for upload function
-                window.uploadDuplicateInfo = data;
-
-                if (data.is_duplicate) {
-                    duplicateResultsDiv.innerHTML = `
-                        <div class="message warning">
-                            <strong>⚠️ Duplicate Found!</strong><br>
-                            ${data.message}<br>
-                            <small>You can still add this image if needed.</small>
-                        </div>
-                        <div class="similar-images" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 10px; margin-top: 15px;">
-                            ${data.similar_images.slice(0, 3).map(img => `
-                                <div class="similar-card">
-                                    <img src="/collection/${img.filename}" alt="Similar" class="similar-image">
-                                    <div class="similar-info">
-                                        Match: ${Math.round((10 - img.distance) / 10 * 100)}%
-                                    </div>
-                                </div>
-                            `).join('')}
-                        </div>
-                    `;
-                } else if (data.similar_images.length > 0) {
-                    duplicateResultsDiv.innerHTML = `
-                        <div class="message info">
-                            <strong>ℹ️ Similar Images Found</strong><br>
-                            ${data.message}<br>
-                            Found ${data.similar_images.length} somewhat similar image${data.similar_images.length > 1 ? 's' : ''}.
-                        </div>
-                    `;
-                } else {
-                    duplicateResultsDiv.innerHTML = `
-                        <div class="message success">
-                            <strong>✅ No Duplicates Found</strong><br>
-                            This appears to be a new, unique sleeve design!
-                        </div>
-                    `;
-                }
-            } catch (error) {
-                duplicateResultsDiv.innerHTML = `<div class="message error">Error checking duplicate: ${error.message}</div>`;
             }
         }
 
@@ -1096,8 +891,6 @@
         // Display gallery
         function displayGallery(images) {
             const gallery = document.getElementById('gallery');
-            // Store current filtered images for navigation
-            window.currentGalleryImages = images;
            
             if (images.length === 0) {
                 gallery.innerHTML = `
@@ -1110,18 +903,21 @@
                 return;
             }
 
-            gallery.innerHTML = images.map((img, index) => `
-                <div class="card" onclick="openImageView(${index})">
+            gallery.innerHTML = images.map(img => `
+                <div class="card">
+                    ${img.was_auto_processed ? '<div class="card-badge">Auto-Processed</div>' : ''}
                     <img src="/collection/${img.filename}" alt="${img.name || 'Pokemon Sleeve'}" class="card-image">
                     <div class="card-body">
                         <div class="card-title">${img.name || img.original_filename}</div>
+                        ${img.description ? `<div class="card-description">${img.description}</div>` : ''}
                         ${img.tags && img.tags.length > 0 ? `
                             <div class="card-tags">
-                                ${img.tags.map((tag, tagIndex) => `<span class="tag">${tag}${tagIndex < img.tags.length - 1 ? ',' : ''}</span>`).join(' ')}
+                                ${img.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
                             </div>
                         ` : ''}
-                        <div class="card-actions" style="display: none;">
-                            <!-- Edit and Delete buttons removed from public view -->
+                        <div class="card-actions">
+                            <button class="btn-small" onclick="openEditModal('${img.id}')">Edit</button>
+                            <button class="btn-small btn-delete" onclick="deleteImage('${img.id}')">Delete</button>
                         </div>
                     </div>
                 </div>
@@ -1139,11 +935,6 @@
             if (!fileInput.files[0]) {
                 showMessage('Please select an image file', 'error');
                 return;
-            }
-
-            // If we already detected a duplicate upfront, automatically force it
-            if (!forceDuplicate && window.uploadDuplicateInfo && window.uploadDuplicateInfo.is_duplicate) {
-                forceDuplicate = true;
             }
 
             const formData = new FormData();
@@ -1177,9 +968,6 @@
                     showMessage('✅ ' + data.message, 'success');
                     document.getElementById('upload-form').reset();
                     document.getElementById('upload-preview').classList.remove('active');
-                    const duplicateResultsDiv = document.getElementById('upload-duplicate-results');
-                    if (duplicateResultsDiv) duplicateResultsDiv.style.display = 'none';
-                    window.uploadDuplicateInfo = null; // Clear duplicate info
                     loadCollection();
 
                     // Check if "add another" is checked
@@ -1478,10 +1266,10 @@
                 const container = document.getElementById('tag-filter-container');
                
                 if (data.tags.length > 0) {
-                    container.innerHTML = '<span style="color: #666; margin-right: 5px;">Tags:</span>' +
-                        data.tags.map((tag, index) =>
-                            `<span class="tag-chip" onclick="filterByTag('${tag}')">${tag}${index < data.tags.length - 1 ? ',' : ''}</span>`
-                        ).join(' ');
+                    container.innerHTML = '<strong>Filter by tag:</strong> ' +
+                        data.tags.map(tag =>
+                            `<span class="tag-chip" onclick="filterByTag('${tag}')">${tag}</span>`
+                        ).join('');
                 } else {
                     container.innerHTML = '';
                 }
@@ -1507,73 +1295,6 @@
                 messageEl.remove();
             }, 5000);
         }
-
-        // Image view modal functions
-        function openImageView(index) {
-            if (!window.currentGalleryImages || window.currentGalleryImages.length === 0) return;
-            
-            window.currentImageIndex = index;
-            updateImageView();
-            document.getElementById('image-view-modal').classList.add('active');
-            document.body.style.overflow = 'hidden'; // Prevent background scrolling
-        }
-
-        function closeImageView() {
-            document.getElementById('image-view-modal').classList.remove('active');
-            document.body.style.overflow = ''; // Restore scrolling
-        }
-
-        function updateImageView() {
-            if (!window.currentGalleryImages || window.currentGalleryImages.length === 0) return;
-            
-            const img = window.currentGalleryImages[window.currentImageIndex];
-            const modal = document.getElementById('image-view-modal');
-            
-            modal.querySelector('#image-view-img').src = `/collection/${img.filename}`;
-            modal.querySelector('#image-view-title').textContent = img.name || img.original_filename;
-            modal.querySelector('#image-view-description').textContent = img.description || 'No description';
-            modal.querySelector('#image-view-description').style.display = img.description ? 'block' : 'none';
-            
-            const tagsContainer = modal.querySelector('#image-view-tags');
-            if (img.tags && img.tags.length > 0) {
-                tagsContainer.innerHTML = img.tags.map(tag => `<span class="image-view-tag">${tag}</span>`).join(', ');
-                tagsContainer.style.display = 'flex';
-            } else {
-                tagsContainer.style.display = 'none';
-            }
-            
-            // Update navigation buttons
-            const prevBtn = modal.querySelector('#image-nav-prev');
-            const nextBtn = modal.querySelector('#image-nav-next');
-            prevBtn.disabled = window.currentImageIndex === 0;
-            nextBtn.disabled = window.currentImageIndex === window.currentGalleryImages.length - 1;
-        }
-
-        function navigateImage(direction) {
-            if (!window.currentGalleryImages) return;
-            
-            if (direction === 'prev' && window.currentImageIndex > 0) {
-                window.currentImageIndex--;
-            } else if (direction === 'next' && window.currentImageIndex < window.currentGalleryImages.length - 1) {
-                window.currentImageIndex++;
-            }
-            
-            updateImageView();
-        }
-
-        // Keyboard navigation
-        document.addEventListener('keydown', function(e) {
-            const modal = document.getElementById('image-view-modal');
-            if (!modal.classList.contains('active')) return;
-            
-            if (e.key === 'ArrowLeft') {
-                navigateImage('prev');
-            } else if (e.key === 'ArrowRight') {
-                navigateImage('next');
-            } else if (e.key === 'Escape') {
-                closeImageView();
-            }
-        });
 
         // Load collection on page load
         loadCollection();

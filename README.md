@@ -72,7 +72,12 @@ This means you can quickly snap photos with your phone on any colored surface an
 
 2. **Run the application:**
    ```bash
-   python app.py
+   python src/app.py
+   ```
+
+   Or use the startup script:
+   ```bash
+   ./bin/start.sh
    ```
 
 3. **Open your browser:**

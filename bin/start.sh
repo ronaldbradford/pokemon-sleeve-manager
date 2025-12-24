@@ -1,5 +1,12 @@
 #!/bin/bash
 
+# Get the directory where this script is located
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+# Get the project root (parent of bin/)
+PROJECT_ROOT="$( cd "$SCRIPT_DIR/.." && pwd )"
+
+cd "$PROJECT_ROOT"
+
 echo "🎴 Pokemon Sleeve Collection Manager"
 echo "===================================="
 echo ""
@@ -10,4 +17,5 @@ echo ""
 echo "Press Ctrl+C to stop the server"
 echo ""
 
-python app.py
+export ADMIN_PASSWORD=Pokemon2015
+python src/app.py

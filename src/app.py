@@ -4,15 +4,20 @@ import hashlib
 import cv2
 import numpy as np
 from datetime import datetime
-from flask import Flask, render_template, request, jsonify, send_from_directory
+from flask import Flask, render_template, request, jsonify, send_from_directory, session, redirect, url_for
 from werkzeug.utils import secure_filename
 from PIL import Image
 import imagehash
 
-app = Flask(__name__)
-app.config['UPLOAD_FOLDER'] = 'collection'
+# Get the project root directory (parent of src/)
+PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+app = Flask(__name__, template_folder=os.path.join(PROJECT_ROOT, 'templates'))
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'dev-secret-key-change-in-production')
+app.config['UPLOAD_FOLDER'] = os.path.join(PROJECT_ROOT, 'collection')
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max file size
-app.config['DATABASE'] = 'collection_db.json'
+app.config['DATABASE'] = os.path.join(PROJECT_ROOT, 'collection_db.json')
+app.config['ADMIN_PASSWORD'] = os.environ.get('ADMIN_PASSWORD', 'admin')  # Change this in production!
 
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
 
@@ -190,10 +195,48 @@ def find_similar_images(target_hashes, db, threshold=5):
     
     return sorted(similar, key=lambda x: x['distance'])
 
+def require_admin():
+    """Check if user is authenticated as admin"""
+    if not session.get('admin_logged_in'):
+        return redirect(url_for('login'))
+
 @app.route('/')
 def index():
-    """Main page"""
+    """Main page - public browse view"""
     return render_template('index.html')
+
+@app.route('/login')
+def login():
+    """Login page"""
+    if session.get('admin_logged_in'):
+        return redirect(url_for('admin'))
+    return render_template('login.html')
+
+@app.route('/api/login', methods=['POST'])
+def api_login():
+    """Handle login authentication"""
+    data = request.json
+    password = data.get('password', '')
+    
+    # Simple password check (in production, use hashed passwords)
+    if password == app.config['ADMIN_PASSWORD']:
+        session['admin_logged_in'] = True
+        return jsonify({'success': True})
+    else:
+        return jsonify({'success': False, 'error': 'Invalid password'}), 401
+
+@app.route('/api/logout', methods=['POST'])
+def api_logout():
+    """Handle logout"""
+    session.pop('admin_logged_in', None)
+    return jsonify({'success': True})
+
+@app.route('/admin')
+def admin():
+    """Admin page - requires authentication"""
+    if not session.get('admin_logged_in'):
+        return redirect(url_for('login'))
+    return render_template('admin.html')
 
 @app.route('/api/collection', methods=['GET'])
 def get_collection():

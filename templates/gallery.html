@@ -48,23 +48,30 @@
             max-width: 100%;
         }
 
+
+
         .gallery-item {
             width: 100%;
-            aspect-ratio: 1;
+            /* Card ratio: 2.5 / 3.5 = 5 / 7 */
+            aspect-ratio: 5 / 7;
             overflow: hidden;
             position: relative;
             cursor: pointer;
             transition: transform 0.2s;
+            /* Optional: Add a subtle background color for consistency while loading */
+            background: #2a2a2a;
         }
 
         .gallery-item:hover {
             transform: scale(1.05);
             z-index: 10;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
         }
 
         .gallery-item img {
             width: 100%;
             height: 100%;
+            /* object-fit: cover ensures the image fills the 5:7 area */
             object-fit: cover;
             display: block;
         }

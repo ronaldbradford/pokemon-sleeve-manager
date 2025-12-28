@@ -10,12 +10,12 @@ def search_and_highlight(directory_path, target_image_path, threshold=0.95):
         return
 
     th, tw = target.shape[:2]
-    
+
     # Filter for image files first to get a total count
     valid_extensions = ('.png', '.jpg', '.jpeg', '.bmp', '.webp')
-    files_to_process = [f for f in os.listdir(directory_path) 
+    files_to_process = [f for f in os.listdir(directory_path)
                         if f.lower().endswith(valid_extensions)]
-    
+
     total_files = len(files_to_process)
     if total_files == 0:
         print(f"No valid images found in {directory_path}")
@@ -33,7 +33,7 @@ def search_and_highlight(directory_path, target_image_path, threshold=0.95):
     for index, filename in enumerate(files_to_process, start=1):
         # Progress indicator
         print(f"[{index}/{total_files}] Processing: {filename}", end="\r")
-        
+
         collage_path = os.path.join(directory_path, filename)
         collage = cv2.imread(collage_path)
 

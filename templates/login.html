@@ -13,7 +13,7 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #6798A3 0%, #236271 100%);
             min-height: 100vh;
             display: flex;
             align-items: center;
@@ -31,7 +31,7 @@
         }
 
         h1 {
-            color: #667eea;
+            color: #02313C;
             font-size: 2em;
             margin-bottom: 10px;
             text-align: center;
@@ -65,12 +65,12 @@
 
         input[type="password"]:focus {
             outline: none;
-            border-color: #667eea;
+            border-color: #3D7886;
         }
 
         button {
             width: 100%;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #3D7886 0%, #236271 100%);
             color: white;
             border: none;
             padding: 12px 30px;
@@ -83,7 +83,7 @@
 
         button:hover {
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+            box-shadow: 0 5px 15px rgba(61, 120, 134, 0.4);
         }
 
         .error-message {
@@ -105,9 +105,9 @@
     <div class="login-container">
         <h1>🔐 Admin Login</h1>
         <p class="subtitle">Enter password to access admin features</p>
-        
+
         <div id="error-message" class="error-message"></div>
-        
+
         <form id="login-form" onsubmit="return false;">
             <div class="form-group">
                 <label for="password">Password</label>
@@ -121,7 +121,7 @@
         function login() {
             const password = document.getElementById('password').value;
             const errorDiv = document.getElementById('error-message');
-            
+
             fetch('/api/login', {
                 method: 'POST',
                 headers: {

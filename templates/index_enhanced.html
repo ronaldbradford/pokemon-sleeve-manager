@@ -516,9 +516,9 @@
                     <button onclick="searchCollection()">Search</button>
                     <button onclick="clearSearch()">Clear</button>
                 </div>
-                
+
                 <div id="tag-filter-container" class="tag-filter"></div>
-                
+
                 <div id="collection-stats" style="margin-bottom: 15px; color: #666;"></div>
             </div>
 
@@ -531,7 +531,7 @@
                         <p style="color: #999; font-size: 14px;">PNG, JPG, GIF, WEBP (Max 16MB)</p>
                         <input type="file" id="file-input" accept="image/*" style="display: none;">
                     </div>
-                    
+
                     <div id="upload-preview" class="preview-container">
                         <div class="preview-label">
                             <span>✅ Preview (Processed)</span>
@@ -543,12 +543,12 @@
                         <label for="name-input">Sleeve Name</label>
                         <input type="text" id="name-input" placeholder="e.g., Pikachu Ultra Pro Sleeves">
                     </div>
-                    
+
                     <div class="form-group">
                         <label for="description-input">Description</label>
                         <textarea id="description-input" placeholder="Add any notes or details about this sleeve..."></textarea>
                     </div>
-                    
+
                     <div class="form-group">
                         <label for="tags-input">Tags (space-separated)</label>
                         <input type="text" id="tags-input" placeholder="e.g., pikachu yellow ultra-pro electric">
@@ -773,7 +773,7 @@
                             previewContainer.classList.add('active');
                         };
                         reader.readAsDataURL(fileInput.files[0]);
-                        
+
                         if (data.message) {
                             showMessage(data.message, 'info');
                         }
@@ -861,7 +861,7 @@
         // Display gallery
         function displayGallery(images) {
             const gallery = document.getElementById('gallery');
-            
+
             if (images.length === 0) {
                 gallery.innerHTML = `
                     <div class="empty-state" style="grid-column: 1 / -1;">
@@ -1208,7 +1208,7 @@
         function filterByTag(tag) {
             currentTag = currentTag === tag ? '' : tag;
             applyFilters();
-            
+
             document.querySelectorAll('.tag-chip').forEach(chip => {
                 chip.classList.toggle('active', chip.textContent === tag && currentTag);
             });
@@ -1219,7 +1219,7 @@
                 let url = '/api/collection?';
                 if (currentFilter) url += `search=${encodeURIComponent(currentFilter)}&`;
                 if (currentTag) url += `tag=${encodeURIComponent(currentTag)}`;
-                
+
                 const response = await fetch(url);
                 const data = await response.json();
                 displayGallery(data.images);
@@ -1234,10 +1234,10 @@
                 const response = await fetch('/api/tags');
                 const data = await response.json();
                 const container = document.getElementById('tag-filter-container');
-                
+
                 if (data.tags.length > 0) {
-                    container.innerHTML = '<strong>Filter by tag:</strong> ' + 
-                        data.tags.map(tag => 
+                    container.innerHTML = '<strong>Filter by tag:</strong> ' +
+                        data.tags.map(tag =>
                             `<span class="tag-chip" onclick="filterByTag('${tag}')">${tag}</span>`
                         ).join('');
                 } else {
@@ -1249,7 +1249,7 @@
         }
 
         function updateStats(count) {
-            document.getElementById('collection-stats').textContent = 
+            document.getElementById('collection-stats').textContent =
                 `Showing ${count} sleeve${count !== 1 ? 's' : ''}`;
         }
 
@@ -1260,7 +1260,7 @@
             messageEl.className = `message ${type}`;
             messageEl.textContent = message;
             container.appendChild(messageEl);
-            
+
             setTimeout(() => {
                 messageEl.remove();
             }, 5000);

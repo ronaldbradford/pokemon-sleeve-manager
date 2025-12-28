@@ -100,18 +100,18 @@ Match Accuracy:
 ## 🎯 What Makes This Special?
 
 ### Traditional Approach (Manual)
-❌ Remember what you have  
-❌ Manually compare photos  
-❌ Keep spreadsheets  
-❌ Search through folders  
-❌ Risk buying duplicates  
+❌ Remember what you have
+❌ Manually compare photos
+❌ Keep spreadsheets
+❌ Search through folders
+❌ Risk buying duplicates
 
 ### With This App
-✅ Automatic duplicate detection  
-✅ Instant visual comparison  
-✅ Searchable database  
-✅ Organized gallery view  
-✅ Confidence before buying  
+✅ Automatic duplicate detection
+✅ Instant visual comparison
+✅ Searchable database
+✅ Organized gallery view
+✅ Confidence before buying
 
 ---
 
@@ -246,7 +246,7 @@ Potential enhancements you could add:
 
 ---
 
-**Ready to organize your collection?** 
+**Ready to organize your collection?**
 
 See QUICKSTART.md to get started in under 5 minutes! 🚀
 

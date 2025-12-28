@@ -22,7 +22,7 @@
             body {
                 padding: 10px;
             }
-            
+
             .container {
                 padding: 0 10px;
             }
@@ -689,12 +689,12 @@
             margin-bottom: 20px;
             align-items: flex-start;
         }
-       
+
         .edit-image-container {
             flex: 1;
             text-align: center;
         }
-       
+
         #edit-preview.preview-container {
             flex: 1;
             margin: 0; /* Remove top/bottom margin to align with the left image */
@@ -714,9 +714,9 @@
                 <button onclick="searchCollection()">Search</button>
                 <button onclick="clearSearch()">Clear</button>
             </div>
-           
+
             <div id="tag-filter-container" class="tag-filter"></div>
-           
+
             <div id="collection-stats" style="margin-bottom: 15px; color: #666;"></div>
         </div>
 
@@ -731,7 +731,7 @@
                         <p style="color: #999; font-size: 14px;">PNG, JPG, GIF, WEBP (Max 16MB)</p>
                         <input type="file" id="file-input" accept="image/*" style="display: none;">
                     </div>
-                   
+
                     <div id="upload-preview" class="preview-container">
                         <div class="preview-label">
                             <span>✅ Preview (Processed)</span>
@@ -745,14 +745,14 @@
                         <label for="name-input">Sleeve Name</label>
                         <input type="text" id="name-input" placeholder="e.g., Pikachu Ultra Pro Sleeves">
                     </div>
-                   
+
                     <div class="form-group">
                         <label for="description-input">Description</label>
                         <textarea id="description-input" placeholder="Add any notes or details about this sleeve..."></textarea>
                     </div>
-                   
+
                     <div class="form-group">
-                        <label for="tags-input">Tags (space-separated)</label>
+                        <label for="tags-input">Tags (space-separated, # will be added automatically)</label>
                         <input type="text" id="tags-input" placeholder="e.g., pikachu yellow ultra-pro electric">
                     </div>
 
@@ -889,6 +889,82 @@
         fileInput.addEventListener('change', previewUploadImage);
         checkFileInput.addEventListener('change', previewCheckImage);
 
+        // Real-time tag processing
+        function formatTagsInput(inputElement) {
+            const cursorPos = inputElement.selectionStart;
+            const value = inputElement.value;
+
+            // Split by spaces, process each word, preserve spaces
+            const parts = value.split(/(\s+)/);
+            let formatted = '';
+            let charCount = 0;
+            let newCursorPos = cursorPos;
+
+            for (let i = 0; i < parts.length; i++) {
+                const part = parts[i];
+                if (part.trim() && !part.match(/^\s+$/)) {
+                    // It's a tag word - format it
+                    let processed = part.replace(/^#+/, '').trim().toLowerCase();
+                    if (processed) {
+                        processed = '#' + processed;
+                        formatted += processed;
+                        const partStart = charCount;
+                        const partEnd = charCount + part.length;
+                        // Adjust cursor if it was within this part
+                        if (cursorPos >= partStart && cursorPos <= partEnd) {
+                            // Cursor was in this word, place it at the end of formatted word
+                            newCursorPos = formatted.length;
+                        } else if (cursorPos > partEnd) {
+                            // Cursor was after this part, adjust by length difference
+                            newCursorPos += (processed.length - part.length);
+                        }
+                        charCount += part.length;
+                    } else {
+                        formatted += part;
+                        charCount += part.length;
+                    }
+                } else {
+                    // It's whitespace - keep it
+                    formatted += part;
+                    charCount += part.length;
+                }
+            }
+
+            inputElement.value = formatted;
+            // Ensure cursor is within bounds
+            newCursorPos = Math.max(0, Math.min(newCursorPos, formatted.length));
+            inputElement.setSelectionRange(newCursorPos, newCursorPos);
+        }
+
+        // Setup real-time tag formatting for input fields
+        function setupTagFormatting(inputId) {
+            const inputElement = document.getElementById(inputId);
+            if (!inputElement) return;
+
+            inputElement.addEventListener('input', function(e) {
+                // Format when space is typed or text is pasted
+                if (e.inputType === 'insertText' && e.data === ' ') {
+                    setTimeout(() => formatTagsInput(this), 0);
+                } else if (e.inputType === 'insertFromPaste') {
+                    setTimeout(() => formatTagsInput(this), 0);
+                }
+            });
+
+            inputElement.addEventListener('paste', function(e) {
+                setTimeout(() => formatTagsInput(this), 0);
+            });
+
+            inputElement.addEventListener('keyup', function(e) {
+                // Format after space key is released
+                if (e.key === ' ' || e.key === 'Spacebar') {
+                    formatTagsInput(this);
+                }
+            });
+        }
+
+        // Setup formatting for tag inputs when page loads
+        setupTagFormatting('tags-input');
+
         function preventDefaults(e) {
             e.preventDefault();
             e.stopPropagation();
@@ -937,7 +1013,7 @@
                             checkUploadDuplicate();
                         };
                         reader.readAsDataURL(fileInput.files[0]);
-                       
+
                         if (data.message) {
                             showMessage(data.message, 'info');
                         }
@@ -1014,14 +1090,21 @@
                             ${data.message}<br>
                             Found ${data.similar_images.length} somewhat similar image${data.similar_images.length > 1 ? 's' : ''}.
                         </div>
-                    `;
-                } else {
-                    duplicateResultsDiv.innerHTML = `
-                        <div class="message success">
-                            <strong>✅ No Duplicates Found</strong><br>
-                            This appears to be a new, unique sleeve design!
+                        <div class="similar-images" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 10px; margin-top: 15px;">
+                            ${data.similar_images.slice(0, 3).map(img => `
+                                <div class="similar-card">
+                                    <img src="/collection/${img.filename}" alt="Similar" class="similar-image">
+                                    <div class="similar-info">
+                                        Match: ${Math.round((10 - img.distance) / 10 * 100)}%
+                                    </div>
+                                </div>
+                            `).join('')}
                         </div>
                     `;
+                } else {
+                    // Hide the duplicate results div when no duplicates found
+                    duplicateResultsDiv.style.display = 'none';
+                    duplicateResultsDiv.innerHTML = '';
                 }
             } catch (error) {
                 duplicateResultsDiv.innerHTML = `<div class="message error">Error checking duplicate: ${error.message}</div>`;
@@ -1098,7 +1181,7 @@
             const gallery = document.getElementById('gallery');
             // Store current filtered images for navigation
             window.currentGalleryImages = images;
-           
+
             if (images.length === 0) {
                 gallery.innerHTML = `
                     <div class="empty-state" style="grid-column: 1 / -1;">
@@ -1128,12 +1211,28 @@
             `).join('');
         }
 
+        // Process tags: lowercase and add # prefix if missing
+        function processTags(tagString) {
+            if (!tagString || !tagString.trim()) return [];
+            return tagString
+                .split(/\s+/)
+                .filter(t => t.trim())
+                .map(tag => {
+                    // Remove any existing # and trim
+                    let processed = tag.replace(/^#+/, '').trim().toLowerCase();
+                    // Add # prefix
+                    return '#' + processed;
+                })
+                .filter(t => t.length > 1); // Filter out just "#"
+        }
+
         // Upload image
         async function uploadImage(forceDuplicate = false) {
             const fileInput = document.getElementById('file-input');
             const name = document.getElementById('name-input').value;
             const description = document.getElementById('description-input').value;
-            const tags = document.getElementById('tags-input').value;
+            const tagsInput = document.getElementById('tags-input').value;
+            const tags = processTags(tagsInput);
             const autoProcess = document.getElementById('auto-process-upload').checked;
 
             if (!fileInput.files[0]) {
@@ -1150,7 +1249,7 @@
             formData.append('file', fileInput.files[0]);
             formData.append('name', name);
             formData.append('description', description);
-            formData.append('tags', tags);
+            formData.append('tags', tags.join(' '));
             formData.append('auto_process', autoProcess);
             if (forceDuplicate) {
                 formData.append('force_duplicate', 'true');
@@ -1349,12 +1448,20 @@
             document.getElementById('edit-filename').value = image.filename;
             document.getElementById('edit-name').value = image.name || '';
             document.getElementById('edit-description').value = image.description || '';
+            // Display tags with # prefix
             document.getElementById('edit-tags').value = (image.tags || []).join(' ');
             document.getElementById('edit-auto-process').checked = false;
             document.getElementById('edit-preview').classList.remove('active');
 
             // Display current image
             document.getElementById('edit-current-image').src = `/collection/${image.filename}`;
+
+            // Setup formatting for edit-tags if not already set up
+            const editTagsInput = document.getElementById('edit-tags');
+            if (editTagsInput && !editTagsInput.dataset.formatted) {
+                setupTagFormatting('edit-tags');
+                editTagsInput.dataset.formatted = 'true';
+            }
 
             document.getElementById('edit-modal').classList.add('active');
         }
@@ -1408,7 +1515,8 @@
             const id = document.getElementById('edit-id').value;
             const name = document.getElementById('edit-name').value;
             const description = document.getElementById('edit-description').value;
-            const tags = document.getElementById('edit-tags').value.split(/\s+/).filter(t => t);
+            const tagsInput = document.getElementById('edit-tags').value;
+            const tags = processTags(tagsInput);
             const reprocess = document.getElementById('edit-auto-process').checked;
 
             try {
@@ -1450,7 +1558,7 @@
         function filterByTag(tag) {
             currentTag = currentTag === tag ? '' : tag;
             applyFilters();
-           
+
             document.querySelectorAll('.tag-chip').forEach(chip => {
                 chip.classList.toggle('active', chip.textContent === tag && currentTag);
             });
@@ -1461,7 +1569,7 @@
                 let url = '/api/collection?';
                 if (currentFilter) url += `search=${encodeURIComponent(currentFilter)}&`;
                 if (currentTag) url += `tag=${encodeURIComponent(currentTag)}`;
-               
+
                 const response = await fetch(url);
                 const data = await response.json();
                 displayGallery(data.images);
@@ -1476,7 +1584,7 @@
                 const response = await fetch('/api/tags');
                 const data = await response.json();
                 const container = document.getElementById('tag-filter-container');
-               
+
                 if (data.tags.length > 0) {
                     container.innerHTML = '<span style="color: #666; margin-right: 5px;">Tags:</span>' +
                         data.tags.map((tag, index) =>
@@ -1511,7 +1619,7 @@
         // Image view modal functions
         function openImageView(index) {
             if (!window.currentGalleryImages || window.currentGalleryImages.length === 0) return;
-            
+
             window.currentImageIndex = index;
             updateImageView();
             document.getElementById('image-view-modal').classList.add('active');
@@ -1525,15 +1633,15 @@
 
         function updateImageView() {
             if (!window.currentGalleryImages || window.currentGalleryImages.length === 0) return;
-            
+
             const img = window.currentGalleryImages[window.currentImageIndex];
             const modal = document.getElementById('image-view-modal');
-            
+
             modal.querySelector('#image-view-img').src = `/collection/${img.filename}`;
             modal.querySelector('#image-view-title').textContent = img.name || img.original_filename;
             modal.querySelector('#image-view-description').textContent = img.description || 'No description';
             modal.querySelector('#image-view-description').style.display = img.description ? 'block' : 'none';
-            
+
             const tagsContainer = modal.querySelector('#image-view-tags');
             if (img.tags && img.tags.length > 0) {
                 tagsContainer.innerHTML = img.tags.map(tag => `<span class="image-view-tag">${tag}</span>`).join(', ');
@@ -1541,7 +1649,7 @@
             } else {
                 tagsContainer.style.display = 'none';
             }
-            
+
             // Update navigation buttons
             const prevBtn = modal.querySelector('#image-nav-prev');
             const nextBtn = modal.querySelector('#image-nav-next');
@@ -1551,13 +1659,13 @@
 
         function navigateImage(direction) {
             if (!window.currentGalleryImages) return;
-            
+
             if (direction === 'prev' && window.currentImageIndex > 0) {
                 window.currentImageIndex--;
             } else if (direction === 'next' && window.currentImageIndex < window.currentGalleryImages.length - 1) {
                 window.currentImageIndex++;
             }
-            
+
             updateImageView();
         }
 
@@ -1565,7 +1673,7 @@
         document.addEventListener('keydown', function(e) {
             const modal = document.getElementById('image-view-modal');
             if (!modal.classList.contains('active')) return;
-            
+
             if (e.key === 'ArrowLeft') {
                 navigateImage('prev');
             } else if (e.key === 'ArrowRight') {

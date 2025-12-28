@@ -209,8 +209,8 @@ The app uses two perceptual hashing algorithms:
 ### Computer Vision Pipeline
 
 ```
-Original Image → Grayscale Conversion → Gaussian Blur → 
-Edge Detection → Morphological Dilation → Contour Detection → 
+Original Image → Grayscale Conversion → Gaussian Blur →
+Edge Detection → Morphological Dilation → Contour Detection →
 Polygon Approximation → Perspective Transform → Cropped Output
 ```
 
